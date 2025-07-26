@@ -2,10 +2,261 @@
   "1735522859": {
     "user_id": 1735522859,
     "username": "Osamu1123",
-    "points": 0,
+    "points": 638,
     "spins_today": 0,
     "last_spin_date": "2025-07-26",
     "event_done": false,
-    "history": []
+    "history": [
+      {
+        "timestamp": "2025-07-26T07:57:16.915408",
+        "action": "Spin",
+        "details": "Won 3 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:17.841965",
+        "action": "Spin",
+        "details": "Won 9 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:18.782614",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:20.158638",
+        "action": "Spin",
+        "details": "Won 6 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:21.101533",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:27.001248",
+        "action": "Spin",
+        "details": "Won 9 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:30.538913",
+        "action": "Spin",
+        "details": "Won 7 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:31.473606",
+        "action": "Spin",
+        "details": "Won 7 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:32.383613",
+        "action": "Spin",
+        "details": "Won 14 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:33.332513",
+        "action": "Spin",
+        "details": "Won 7 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:37.444272",
+        "action": "Spin",
+        "details": "Won 4 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:38.488498",
+        "action": "Spin",
+        "details": "Won 2 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:39.437583",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:40.367674",
+        "action": "Spin",
+        "details": "Won 5 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:41.281797",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:45.362543",
+        "action": "Spin",
+        "details": "Won 6 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:47.454502",
+        "action": "Spin",
+        "details": "Won 9 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:48.594422",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:49.565916",
+        "action": "Spin",
+        "details": "Won 2 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:50.657579",
+        "action": "Spin",
+        "details": "Won 5 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:51.582528",
+        "action": "Spin",
+        "details": "Won 24 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:52.477618",
+        "action": "Spin",
+        "details": "Won 6 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:53.448696",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:54.361582",
+        "action": "Spin",
+        "details": "Won 2 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:57:59.119478",
+        "action": "Spin",
+        "details": "Won 15 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:00.029593",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:00.910838",
+        "action": "Spin",
+        "details": "Won 4 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:01.939143",
+        "action": "Spin",
+        "details": "Won 6 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:04.061696",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:04.960892",
+        "action": "Spin",
+        "details": "Won 2 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:05.840183",
+        "action": "Spin",
+        "details": "Won 9 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:06.721578",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:07.597159",
+        "action": "Spin",
+        "details": "Won 5 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:08.497087",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:09.389138",
+        "action": "Spin",
+        "details": "Won 12 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:10.276857",
+        "action": "Spin",
+        "details": "Won 4 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:11.163902",
+        "action": "Spin",
+        "details": "Won 11 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:12.289069",
+        "action": "Spin",
+        "details": "Won 5 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:13.163511",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:14.058814",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:14.981892",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:15.871563",
+        "action": "Spin",
+        "details": "Won 5 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:16.793824",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:17.951693",
+        "action": "Spin",
+        "details": "Won 2 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:18.870690",
+        "action": "Spin",
+        "details": "Won 7 points"
+      },
+      {
+        "timestamp": "2025-07-26T07:58:33.917466",
+        "action": "Spin",
+        "details": "Won 8 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:03:19.549618",
+        "action": "Spin",
+        "details": "Won 2 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:03:36.965202",
+        "action": "Spin",
+        "details": "Won 24 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:03:50.089789",
+        "action": "Spin",
+        "details": "Won 1 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:03:51.856979",
+        "action": "Spin",
+        "details": "Won 14 points"
+      }
+    ]
   }
 }

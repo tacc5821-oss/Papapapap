@@ -121,12 +121,15 @@ async def handle_event_channels(update: Update, context: ContextTypes.DEFAULT_TY
     preview_text += "\n🕑 Status: Waiting for event confirmation."
     
     keyboard.append([
-        InlineKeyboardButton("✅ Confirm Event", callback_data=f"event_confirm_{len(channels)}"),
+        InlineKeyboardButton("✅ Confirm Event", callback_data=f"event_confirm_new"),
         InlineKeyboardButton("❌ Cancel Event", callback_data="event_cancel_creation")
     ])
     
-    # Store channels temporarily
-    context.user_data['pending_channels'] = channels
+    # Store channels in bot state temporarily
+    bot_state = load_bot_state()
+    bot_state['pending_event_channels'] = channels
+    save_bot_state(bot_state)
+    
     admin_states[user.id] = "confirming_event"
     
     await update.message.reply_text(
@@ -142,7 +145,9 @@ async def event_confirm_callback(update: Update, context: ContextTypes.DEFAULT_T
     if query.from_user.id != OWNER_ID:
         return
     
-    channels = context.user_data.get('pending_channels', [])
+    # Get channels from bot state instead of user data
+    bot_state = load_bot_state()
+    channels = bot_state.get('pending_event_channels', [])
     
     if not channels:
         await query.edit_message_text("❌ No channels found. Please try again.")
@@ -164,9 +169,10 @@ async def event_confirm_callback(update: Update, context: ContextTypes.DEFAULT_T
         user_data[user_id]["event_done"] = False
     save_user_data(user_data)
     
-    # Clear admin state
+    # Clear admin state and pending channels
     admin_states.pop(query.from_user.id, None)
-    context.user_data.pop('pending_channels', None)
+    bot_state.pop('pending_event_channels', None)
+    save_bot_state(bot_state)
     
     await query.edit_message_text(
         f"✅ Event Created Successfully!\n\n"
@@ -192,7 +198,9 @@ async def event_cancel_callback(update: Update, context: ContextTypes.DEFAULT_TY
     if query.data == "event_cancel_creation":
         # Cancel event creation
         admin_states.pop(query.from_user.id, None)
-        context.user_data.pop('pending_channels', None)
+        bot_state = load_bot_state()
+        bot_state.pop('pending_event_channels', None)
+        save_bot_state(bot_state)
         
         await query.edit_message_text(
             "❌ Event creation cancelled.",

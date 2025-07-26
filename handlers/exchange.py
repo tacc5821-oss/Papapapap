@@ -43,10 +43,20 @@ async def exchange_amount_callback(update: Update, context: ContextTypes.DEFAULT
         await query.answer("❌ Insufficient points for this exchange!", show_alert=True)
         return
     
+    # Handle non-numeric callback data
+    if not query.data.startswith("exchange_") or len(query.data.split("_")) < 2:
+        await query.answer("❌ Invalid selection!", show_alert=True)
+        return
+    
+    try:
+        amount = int(query.data.split("_")[1])
+    except (ValueError, IndexError):
+        await query.answer("❌ Invalid amount selection!", show_alert=True)
+        return
+    
     await query.answer()
     
     user = query.from_user
-    amount = int(query.data.split("_")[1])
     user_data = get_user_data(user.id)
     
     # Check if user has enough points

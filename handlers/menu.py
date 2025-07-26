@@ -58,7 +58,7 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await show_my_points(query, user_data)
     elif query.data == "history":
         await show_history(query, user_data)
-    else:
+    elif query.data == "main_menu":
         # Return to main menu
         welcome_text = (
             f"🎉 Welcome {user.first_name}!\n\n"

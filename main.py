@@ -26,10 +26,10 @@ def main():
     application.add_handler(CommandHandler("start", start))
 
     # Add callback query handlers
-    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern="^main_menu$"))
+    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern="^(main_menu|my_points|history)$"))
     application.add_handler(CallbackQueryHandler(spin_callback, pattern="^spin$"))
     application.add_handler(CallbackQueryHandler(exchange_callback, pattern="^exchange$"))
-    application.add_handler(CallbackQueryHandler(exchange_amount_callback, pattern="^exchange_"))
+    application.add_handler(CallbackQueryHandler(exchange_amount_callback, pattern="^exchange_[0-9]+$"))
     application.add_handler(CallbackQueryHandler(event_callback, pattern="^event$"))
     application.add_handler(CallbackQueryHandler(event_done_callback, pattern="^event_done$"))
     
