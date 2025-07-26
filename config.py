@@ -8,11 +8,10 @@ LOG_GROUP_ID = int(os.getenv("LOG_GROUP_ID", "-1002878767296"))
 # Spin system configuration
 DAILY_SPIN_LIMIT = 5
 SPIN_REWARDS = [
-    (1, 10, 0.9),   # min_points, max_points, probability
-    (10, 25, 0.7),
-    (25, 50, 0.5),
-    (50, 70, 0.2),
-    (100, 100, 0.1),
+    (10, 30, 0.9),   # min_points, max_points, probability
+    (30, 50, 0.5),
+    (50, 80, 0.3),
+    (80, 100, 0.1),
 ]
 
 # Exchange configuration
