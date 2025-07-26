@@ -2,41 +2,11 @@
   "1735522859": {
     "user_id": 1735522859,
     "username": "Osamu1123",
-    "points": 1037,
+    "points": 134,
     "spins_today": 0,
     "last_spin_date": "2025-07-26",
     "event_done": false,
     "history": [
-      {
-        "timestamp": "2025-07-26T07:57:37.444272",
-        "action": "Spin",
-        "details": "Won 4 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:38.488498",
-        "action": "Spin",
-        "details": "Won 2 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:39.437583",
-        "action": "Spin",
-        "details": "Won 8 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:40.367674",
-        "action": "Spin",
-        "details": "Won 5 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:41.281797",
-        "action": "Spin",
-        "details": "Won 8 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:45.362543",
-        "action": "Spin",
-        "details": "Won 6 points"
-      },
       {
         "timestamp": "2025-07-26T07:57:47.454502",
         "action": "Spin",
@@ -256,6 +226,36 @@
         "timestamp": "2025-07-26T08:21:27.844896",
         "action": "Spin",
         "details": "Won 40 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:24:47.869623",
+        "action": "Spin",
+        "details": "Won 11 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:24:50.656590",
+        "action": "Spin",
+        "details": "Won 25 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:24:54.116944",
+        "action": "Spin",
+        "details": "Won 13 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:24:57.026074",
+        "action": "Spin",
+        "details": "Won 25 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:24:59.780824",
+        "action": "Spin",
+        "details": "Won 23 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:25:41.835203",
+        "action": "Exchange",
+        "details": "Exchanged 1000 points"
       }
     ]
   },
@@ -312,6 +312,7 @@
         "action": "Exchange",
         "details": "Exchanged 500 points"
       }
-    ]
+    ],
+    "spins_left": 21
   }
 }

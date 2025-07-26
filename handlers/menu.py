@@ -2,7 +2,8 @@ import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from database import get_user_data, update_user_data, reset_daily_spins
-from config import OWNER_ID
+from config import OWNER_ID, DAILY_SPIN_LIMIT
+from datetime import date
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +18,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_data = get_user_data(user.id)
     update_user_data(user.id, {"username": user.username or ""})
     
+    # Calculate spin information
+    today = date.today().isoformat()
+    spins_today = user_data.get("spins_today", 0) if user_data.get("last_spin_date") == today else 0
+    bonus_spins = user_data.get("spins_left", 0)
+    
     welcome_text = (
         f"🎉 Welcome {user.first_name}!\n\n"
         f"💰 Your Points: {user_data['points']}\n"
+        f"🎁 Daily Spins: {spins_today}/{DAILY_SPIN_LIMIT if user.id != OWNER_ID else '∞'}\n"
+        f"🎰 Bonus Spins: {bonus_spins}\n\n"
         f"🎯 Choose an option from the menu below:"
     )
     
@@ -60,9 +68,16 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await show_history(query, user_data)
     elif query.data == "main_menu":
         # Return to main menu
+        # Calculate spin information
+        today = date.today().isoformat()
+        spins_today = user_data.get("spins_today", 0) if user_data.get("last_spin_date") == today else 0
+        bonus_spins = user_data.get("spins_left", 0)
+        
         welcome_text = (
             f"🎉 Welcome {user.first_name}!\n\n"
             f"💰 Your Points: {user_data['points']}\n"
+            f"🎁 Daily Spins: {spins_today}/{DAILY_SPIN_LIMIT if user.id != OWNER_ID else '∞'}\n"
+            f"🎰 Bonus Spins: {bonus_spins}\n\n"
             f"🎯 Choose an option from the menu below:"
         )
         
