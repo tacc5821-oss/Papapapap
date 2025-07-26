@@ -42,10 +42,25 @@ async def event_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
     
-    # Show event details
+    # Show event details with participant count
     channels = current_event.get("channels", [])
+    participant_limit = current_event.get("participant_limit", 30)
+    current_participants = len(bot_state.get("event_participants", []))
     
-    event_text = "📢 Active Event!\n\n📋 Join the following channels and click ✅ Done when finished:\n\n"
+    # Check if event is full
+    if current_participants >= participant_limit:
+        await query.edit_message_text(
+            f"📢 Event Full!\n\n"
+            f"👥 Participants: {current_participants}/{participant_limit}\n"
+            f"❌ Sorry, this event has reached its participant limit.\n\n"
+            f"⏳ Please wait for the next event.",
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
+            ]])
+        )
+        return
+    
+    event_text = f"📢 Active Event!\n\n👥 Participants: {current_participants}/{participant_limit}\n\n📋 Join the following channels and click ✅ Done when finished:\n\n"
     
     keyboard = []
     for i, channel in enumerate(channels):
@@ -70,9 +85,25 @@ async def event_done_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     bot_state = load_bot_state()
     
     # Check if there's an active event
-    if not bot_state.get("current_event"):
+    current_event = bot_state.get("current_event")
+    if not current_event:
         await query.edit_message_text(
             f"❌ No active event found!",
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
+            ]])
+        )
+        return
+    
+    # Check participant limit
+    participant_limit = current_event.get("participant_limit", 30)
+    current_participants = len(bot_state.get("event_participants", []))
+    
+    if current_participants >= participant_limit:
+        await query.edit_message_text(
+            f"📢 Event Full!\n\n"
+            f"👥 Participants: {current_participants}/{participant_limit}\n"
+            f"❌ Sorry, this event has reached its participant limit.",
             reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
             ]])

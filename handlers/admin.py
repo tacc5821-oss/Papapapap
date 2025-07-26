@@ -31,6 +31,8 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await view_event_participants(query)
     elif query.data == "admin_cancel_event":
         await cancel_current_event(query, context)
+    elif query.data.startswith("event_limit_"):
+        await handle_limit_selection(query, context)
 
 async def show_admin_panel(query):
     """Show admin panel."""
@@ -40,8 +42,11 @@ async def show_admin_panel(query):
     admin_text = "🧑‍💼 Admin Panel\n\n"
     
     if current_event:
+        participant_limit = current_event.get("participant_limit", 30)
+        current_participants = len(bot_state.get('event_participants', []))
         admin_text += f"📢 Current Event: Active\n"
-        admin_text += f"📊 Participants: {len(bot_state.get('event_participants', []))}\n\n"
+        admin_text += f"👥 Participants: {current_participants}/{participant_limit}\n"
+        admin_text += f"📊 Channels: {len(current_event.get('channels', []))}\n\n"
     else:
         admin_text += f"📢 Current Event: None\n\n"
     
@@ -62,10 +67,38 @@ async def show_admin_panel(query):
 
 async def start_event_creation(query, context):
     """Start event creation process."""
+    admin_states[query.from_user.id] = "waiting_for_limit"
+    
+    from config import EVENT_PARTICIPANT_LIMITS
+    
+    # Show participant limit selection
+    limit_text = "📢 Create New Event\n\n👥 Select participant limit for this event:"
+    
+    keyboard = []
+    for limit in EVENT_PARTICIPANT_LIMITS:
+        keyboard.append([InlineKeyboardButton(f"{limit} people", callback_data=f"event_limit_{limit}")])
+    
+    keyboard.append([InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")])
+    
+    await query.edit_message_text(
+        limit_text,
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+async def handle_limit_selection(query, context):
+    """Handle participant limit selection."""
+    limit = int(query.data.split("_")[2])
+    
+    # Store the selected limit
+    bot_state = load_bot_state()
+    bot_state['pending_event_limit'] = limit
+    save_bot_state(bot_state)
+    
     admin_states[query.from_user.id] = "waiting_for_channels"
     
     await query.edit_message_text(
         f"📢 Create New Event\n\n"
+        f"👥 Participant Limit: {limit} people\n\n"
         f"Please send up to 10 Telegram channel links.\n"
         f"Send them one by one or all at once.\n\n"
         f"Example:\n"
@@ -145,18 +178,19 @@ async def event_confirm_callback(update: Update, context: ContextTypes.DEFAULT_T
     if query.from_user.id != OWNER_ID:
         return
     
-    # Get channels from bot state instead of user data
+    # Get channels and limit from bot state
     bot_state = load_bot_state()
     channels = bot_state.get('pending_event_channels', [])
+    participant_limit = bot_state.get('pending_event_limit', 30)
     
     if not channels:
         await query.edit_message_text("❌ No channels found. Please try again.")
         return
     
-    # Create event
-    bot_state = load_bot_state()
+    # Create event with participant limit
     bot_state["current_event"] = {
         "channels": channels,
+        "participant_limit": participant_limit,
         "created_at": str(query.message.date)
     }
     bot_state["event_participants"] = []
@@ -169,14 +203,16 @@ async def event_confirm_callback(update: Update, context: ContextTypes.DEFAULT_T
         user_data[user_id]["event_done"] = False
     save_user_data(user_data)
     
-    # Clear admin state and pending channels
+    # Clear admin state and pending data
     admin_states.pop(query.from_user.id, None)
     bot_state.pop('pending_event_channels', None)
+    bot_state.pop('pending_event_limit', None)
     save_bot_state(bot_state)
     
     await query.edit_message_text(
         f"✅ Event Created Successfully!\n\n"
         f"📊 Channels: {len(channels)}\n"
+        f"👥 Participant Limit: {participant_limit} people\n"
         f"📢 Event is now active for all users.\n"
         f"🎁 Reward: 200 points per completion",
         reply_markup=InlineKeyboardMarkup([[

@@ -18,6 +18,10 @@ SPIN_REWARDS = [
 EXCHANGE_AMOUNTS = [500, 1000]
 EVENT_REWARD_POINTS = 200
 
+# Event configuration
+DEFAULT_EVENT_PARTICIPANT_LIMIT = 30
+EVENT_PARTICIPANT_LIMITS = [10, 20, 30, 50, 100]  # Available limit options
+
 # File paths
 USER_DATA_FILE = "user_data.json"
 BOT_STATE_FILE = "bot_state.json"

@@ -262,10 +262,10 @@
   "2010895578": {
     "user_id": 2010895578,
     "username": "",
-    "points": 272,
+    "points": 472,
     "spins_today": 5,
     "last_spin_date": "2025-07-26",
-    "event_done": false,
+    "event_done": true,
     "history": [
       {
         "timestamp": "2025-07-26T08:07:54.464046",
@@ -294,6 +294,11 @@
       },
       {
         "timestamp": "2025-07-26T08:08:32.656507",
+        "action": "Event",
+        "details": "Completed event, earned 200 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:14:59.101444",
         "action": "Event",
         "details": "Completed event, earned 200 points"
       }

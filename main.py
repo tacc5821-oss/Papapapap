@@ -34,7 +34,7 @@ def main():
     application.add_handler(CallbackQueryHandler(event_done_callback, pattern="^event_done$"))
     
     # Admin handlers
-    application.add_handler(CallbackQueryHandler(admin_callback, pattern="^admin_"))
+    application.add_handler(CallbackQueryHandler(admin_callback, pattern="^(admin_|event_limit_)"))
     application.add_handler(CallbackQueryHandler(event_confirm_callback, pattern="^event_confirm_"))
     application.add_handler(CallbackQueryHandler(event_cancel_callback, pattern="^event_cancel_"))
     application.add_handler(CallbackQueryHandler(exchange_confirm_callback, pattern="^exchange_confirm_"))
