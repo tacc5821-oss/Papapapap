@@ -2,56 +2,11 @@
   "1735522859": {
     "user_id": 1735522859,
     "username": "Osamu1123",
-    "points": 838,
+    "points": 1037,
     "spins_today": 0,
     "last_spin_date": "2025-07-26",
-    "event_done": true,
+    "event_done": false,
     "history": [
-      {
-        "timestamp": "2025-07-26T07:57:17.841965",
-        "action": "Spin",
-        "details": "Won 9 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:18.782614",
-        "action": "Spin",
-        "details": "Won 10 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:20.158638",
-        "action": "Spin",
-        "details": "Won 6 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:21.101533",
-        "action": "Spin",
-        "details": "Won 10 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:27.001248",
-        "action": "Spin",
-        "details": "Won 9 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:30.538913",
-        "action": "Spin",
-        "details": "Won 7 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:31.473606",
-        "action": "Spin",
-        "details": "Won 7 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:32.383613",
-        "action": "Spin",
-        "details": "Won 14 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:57:33.332513",
-        "action": "Spin",
-        "details": "Won 7 points"
-      },
       {
         "timestamp": "2025-07-26T07:57:37.444272",
         "action": "Spin",
@@ -256,13 +211,58 @@
         "timestamp": "2025-07-26T08:11:39.789534",
         "action": "Event",
         "details": "Completed event, earned 200 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:15.458523",
+        "action": "Spin",
+        "details": "Won 22 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:17.281104",
+        "action": "Spin",
+        "details": "Won 21 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:18.599224",
+        "action": "Spin",
+        "details": "Won 28 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:20.098110",
+        "action": "Spin",
+        "details": "Won 24 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:21.490828",
+        "action": "Spin",
+        "details": "Won 12 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:23.658032",
+        "action": "Spin",
+        "details": "Won 15 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:25.377901",
+        "action": "Spin",
+        "details": "Won 10 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:26.559765",
+        "action": "Spin",
+        "details": "Won 27 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:21:27.844896",
+        "action": "Spin",
+        "details": "Won 40 points"
       }
     ]
   },
   "2010895578": {
     "user_id": 2010895578,
     "username": "",
-    "points": 472,
+    "points": 172,
     "spins_today": 5,
     "last_spin_date": "2025-07-26",
     "event_done": true,
@@ -301,6 +301,16 @@
         "timestamp": "2025-07-26T08:14:59.101444",
         "action": "Event",
         "details": "Completed event, earned 200 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:17:55.673106",
+        "action": "Event",
+        "details": "Completed event, earned 200 points"
+      },
+      {
+        "timestamp": "2025-07-26T08:20:02.307132",
+        "action": "Exchange",
+        "details": "Exchanged 500 points"
       }
     ]
   }

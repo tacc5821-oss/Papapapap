@@ -33,6 +33,10 @@ async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await cancel_current_event(query, context)
     elif query.data.startswith("event_limit_"):
         await handle_limit_selection(query, context)
+    elif query.data == "admin_add_spins":
+        await show_add_spins_menu(query)
+    elif query.data.startswith("add_spins_"):
+        await handle_spin_amount_selection(query)
 
 async def show_admin_panel(query):
     """Show admin panel."""
@@ -58,6 +62,7 @@ async def show_admin_panel(query):
         keyboard.append([InlineKeyboardButton("📄 View Participants", callback_data="admin_view_participants")])
         keyboard.append([InlineKeyboardButton("❌ Cancel Event", callback_data="admin_cancel_event")])
     
+    keyboard.append([InlineKeyboardButton("🎰 Add User Spins", callback_data="admin_add_spins")])
     keyboard.append([InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")])
     
     await query.edit_message_text(
@@ -114,14 +119,85 @@ async def handle_event_channels(update: Update, context: ContextTypes.DEFAULT_TY
     """Handle channel links from admin."""
     user = update.effective_user
     
-    if user.id != OWNER_ID or admin_states.get(user.id) != "waiting_for_channels":
+    if user.id != OWNER_ID:
+        return
+    
+    admin_state = admin_states.get(user.id)
+    if admin_state not in ["waiting_for_channels", "waiting_for_user_id"]:
         return
     
     text = update.message.text
     
     if text == "/cancel":
         admin_states.pop(user.id, None)
-        await update.message.reply_text("❌ Event creation cancelled.")
+        bot_state = load_bot_state()
+        bot_state.pop('pending_event_channels', None)
+        bot_state.pop('pending_spin_amount', None)
+        save_bot_state(bot_state)
+        await update.message.reply_text("❌ Operation cancelled.")
+        return
+    
+    # Handle user ID input for adding spins
+    if admin_state == "waiting_for_user_id":
+        try:
+            target_user_id = int(text.strip())
+        except ValueError:
+            await update.message.reply_text(
+                "❌ Invalid User ID format.\n"
+                "Please send a valid number (e.g., 1234567890)"
+            )
+            return
+        
+        # Get spin amount from bot state
+        bot_state = load_bot_state()
+        spin_amount = bot_state.get('pending_spin_amount', 1)
+        
+        # Add spins to user
+        user_data = get_user_data(target_user_id)
+        current_spins = user_data.get("spins_left", 0)
+        new_spins = current_spins + spin_amount
+        
+        update_user_data(target_user_id, {"spins_left": new_spins})
+        
+        # Get target user info
+        try:
+            target_user = await context.bot.get_chat(target_user_id)
+            username = target_user.username or target_user.first_name or "Unknown"
+        except Exception:
+            username = "Unknown User"
+        
+        # Notify target user
+        try:
+            await context.bot.send_message(
+                chat_id=target_user_id,
+                text=f"🎁 Bonus Spins Added!\n\n"
+                     f"🎰 You received {spin_amount} bonus spins!\n"
+                     f"💫 Total spins available: {new_spins}\n\n"
+                     f"🎯 Use /start to spin now!"
+            )
+        except Exception as e:
+            logger.error(f"Failed to notify user about bonus spins: {e}")
+        
+        # Log to group
+        log_message = (
+            f"🎰 Bonus Spins Added\n"
+            f"👤 {username} (ID: {target_user_id})\n"
+            f"🎯 Amount: {spin_amount} spins\n"
+            f"💫 Total: {new_spins} spins"
+        )
+        await log_to_group(context, log_message)
+        
+        # Clear admin state
+        admin_states.pop(user.id, None)
+        bot_state.pop('pending_spin_amount', None)
+        save_bot_state(bot_state)
+        
+        await update.message.reply_text(
+            f"✅ Successfully added {spin_amount} spins!\n\n"
+            f"👤 User: {username}\n"
+            f"🎰 Added: {spin_amount} spins\n"
+            f"💫 Total: {new_spins} spins"
+        )
         return
     
     # Extract Telegram channel links
@@ -433,3 +509,50 @@ async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TY
     context.user_data.pop('pending_receipt', None)
     
     await update.message.reply_text(f"✅ Exchange completed successfully!")
+
+async def show_add_spins_menu(query):
+    """Show add spins menu with spin amount options."""
+    if query.from_user.id != OWNER_ID:
+        return
+    
+    admin_states[query.from_user.id] = "waiting_for_spin_amount"
+    
+    spin_text = "🎰 Add User Spins\n\n" \
+                "Select how many spins to add:"
+    
+    keyboard = [
+        [InlineKeyboardButton("🎰 1 Spin", callback_data="add_spins_1")],
+        [InlineKeyboardButton("🎰 5 Spins", callback_data="add_spins_5")], 
+        [InlineKeyboardButton("🎰 10 Spins", callback_data="add_spins_10")],
+        [InlineKeyboardButton("🎰 20 Spins", callback_data="add_spins_20")],
+        [InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")]
+    ]
+    
+    await query.edit_message_text(
+        spin_text,
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+async def handle_spin_amount_selection(query):
+    """Handle spin amount selection."""
+    if query.from_user.id != OWNER_ID:
+        return
+    
+    spin_amount = int(query.data.split("_")[2])
+    
+    # Store selected spin amount
+    bot_state = load_bot_state()
+    bot_state['pending_spin_amount'] = spin_amount
+    save_bot_state(bot_state)
+    
+    admin_states[query.from_user.id] = "waiting_for_user_id"
+    
+    await query.edit_message_text(
+        f"🎰 Add {spin_amount} Spins\n\n"
+        f"Please send the User ID to add spins to.\n\n"
+        f"Example: 1234567890\n\n"
+        f"Type /cancel to cancel.",
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")
+        ]])
+    )
