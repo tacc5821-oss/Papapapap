@@ -16,17 +16,18 @@ async def exchange_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_data = get_user_data(user.id)
     
     exchange_text = (
-        f"📤 Exchange Points\n\n"
-        f"💰 Your Points: {user_data['points']}\n\n"
+        f"📤 Exchange MMK\n\n"
+        f"💰 Your MMK: {user_data.get('mmk', 0)} MMK\n\n"
         f"Choose amount to exchange:"
     )
     
     keyboard = []
+    user_mmk = user_data.get('mmk', 0)
     for amount in EXCHANGE_AMOUNTS:
-        if user_data['points'] >= amount:
-            keyboard.append([InlineKeyboardButton(f"💸 {amount} Points", callback_data=f"exchange_{amount}")])
+        if user_mmk >= amount:
+            keyboard.append([InlineKeyboardButton(f"💸 {amount} MMK", callback_data=f"exchange_{amount}")])
         else:
-            keyboard.append([InlineKeyboardButton(f"❌ {amount} Points (Insufficient)", callback_data="insufficient")])
+            keyboard.append([InlineKeyboardButton(f"❌ {amount} MMK (Insufficient)", callback_data="insufficient")])
     
     keyboard.append([InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")])
     
@@ -40,7 +41,7 @@ async def exchange_amount_callback(update: Update, context: ContextTypes.DEFAULT
     query = update.callback_query
     
     if query.data == "insufficient":
-        await query.answer("❌ Insufficient points for this exchange!", show_alert=True)
+        await query.answer("❌ Insufficient MMK for this exchange!", show_alert=True)
         return
     
     # Handle non-numeric callback data
@@ -59,13 +60,14 @@ async def exchange_amount_callback(update: Update, context: ContextTypes.DEFAULT
     user = query.from_user
     user_data = get_user_data(user.id)
     
-    # Check if user has enough points
-    if user_data['points'] < amount:
+    # Check if user has enough MMK
+    user_mmk = user_data.get('mmk', 0)
+    if user_mmk < amount:
         await query.edit_message_text(
-            f"❌ Insufficient Points\n\n"
-            f"💰 Your Points: {user_data['points']}\n"
-            f"📤 Required: {amount}\n\n"
-            f"Earn more points by spinning!",
+            f"❌ Insufficient MMK\n\n"
+            f"💰 Your MMK: {user_mmk} MMK\n"
+            f"📤 Required: {amount} MMK\n\n"
+            f"Earn more MMK by spinning!",
             reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
             ]])
@@ -80,7 +82,7 @@ async def show_payment_method_selection(query, amount):
     """Show payment method selection."""
     payment_text = (
         f"💳 Select Payment Method\n\n"
-        f"💸 Exchange Amount: {amount} points\n\n"
+        f"💸 Exchange Amount: {amount} MMK\n\n"
         f"Choose your preferred payment method:"
     )
     
@@ -117,7 +119,7 @@ async def handle_payment_method_selection(update: Update, context: ContextTypes.
     
     await query.edit_message_text(
         f"📱 {method_name} Selected\n\n"
-        f"💸 Amount: {amount} points\n\n"
+        f"💸 Amount: {amount} MMK\n\n"
         f"Please send your payment information:\n"
         f"📞 Phone Number: (e.g., 09xxxxxxxxx)\n"
         f"👤 Account Name: (Your full name)\n\n"
@@ -184,12 +186,13 @@ async def create_exchange_request(update, context, user, amount, payment_method,
     """Create exchange request with payment details."""
     user_data = get_user_data(user.id)
     
-    # Check points again
-    if user_data['points'] < amount:
+    # Check MMK again
+    user_mmk = user_data.get('mmk', 0)
+    if user_mmk < amount:
         await update.message.reply_text(
-            f"❌ Insufficient points!\n"
-            f"💰 Your points: {user_data['points']}\n"
-            f"📤 Required: {amount}"
+            f"❌ Insufficient MMK!\n"
+            f"💰 Your MMK: {user_mmk} MMK\n"
+            f"📤 Required: {amount} MMK"
         )
         return
     
@@ -206,15 +209,15 @@ async def create_exchange_request(update, context, user, amount, payment_method,
         "payment_method": method_name,
         "phone": phone,
         "account_name": name,
-        "remaining_points": user_data['points'] - amount
+        "remaining_mmk": user_mmk - amount
     }
     save_bot_state(bot_state)
     
-    # Deduct points temporarily
-    update_user_data(user.id, {"points": user_data['points'] - amount})
+    # Deduct MMK temporarily
+    update_user_data(user.id, {"mmk": user_mmk - amount})
     
     # Send enhanced request to owner
-    await send_enhanced_exchange_request_to_owner(context, user, amount, payment_method, method_name, phone, name, user_data['points'] - amount, exchange_id)
+    await send_enhanced_exchange_request_to_owner(context, user, amount, payment_method, method_name, phone, name, user_mmk - amount, exchange_id)
     
     # Clear user data
     context.user_data.pop('pending_exchange_amount', None)
@@ -223,27 +226,27 @@ async def create_exchange_request(update, context, user, amount, payment_method,
     # Notify user
     await update.message.reply_text(
         f"✅ Exchange Request Sent!\n\n"
-        f"💸 Amount: {amount} points\n"
+        f"💸 Amount: {amount} MMK\n"
         f"💳 Method: {method_name}\n"
         f"📞 Phone: {phone}\n"
         f"👤 Name: {name}\n"
-        f"💰 Remaining: {user_data['points'] - amount} points\n\n"
+        f"💰 Remaining: {user_mmk - amount} MMK\n\n"
         f"⏳ Please wait for admin approval.\n"
         f"You will receive confirmation once processed."
     )
 
-async def send_enhanced_exchange_request_to_owner(context, user, amount, payment_method, method_name, phone, name, remaining_points, exchange_id):
+async def send_enhanced_exchange_request_to_owner(context, user, amount, payment_method, method_name, phone, name, remaining_mmk, exchange_id):
     """Send enhanced exchange request to owner with payment details."""
     username = f"@{user.username}" if user.username else user.first_name
     
     request_message = (
         f"📤 Exchange Request\n\n"
         f"👤 User: {username} (ID: {user.id})\n"
-        f"💸 Amount: {amount} points\n"
+        f"💸 Amount: {amount} MMK\n"
         f"💳 Method: {method_name}\n"
         f"📞 Phone: {phone}\n"
         f"👤 Name: {name}\n"
-        f"💰 Remaining: {remaining_points} points"
+        f"💰 Remaining: {remaining_mmk} MMK"
     )
     
     keyboard = [
@@ -262,15 +265,15 @@ async def send_enhanced_exchange_request_to_owner(context, user, amount, payment
     except Exception as e:
         logger.error(f"Failed to send exchange request to owner: {e}")
 
-async def send_exchange_request_to_owner(context, user, amount, remaining_points, exchange_id):
+async def send_exchange_request_to_owner(context, user, amount, remaining_mmk, exchange_id):
     """Send exchange request to owner."""
     username = f"@{user.username}" if user.username else user.first_name
     
     request_message = (
         f"📤 Exchange Request\n"
         f"👤 {username} (ID: {user.id})\n"
-        f"🔄 Request: {amount} points\n"
-        f"💰 Remaining: {remaining_points} points"
+        f"🔄 Request: {amount} MMK\n"
+        f"💰 Remaining: {remaining_mmk} MMK"
     )
     
     keyboard = [

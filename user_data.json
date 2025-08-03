@@ -8,126 +8,6 @@
     "event_done": false,
     "history": [
       {
-        "timestamp": "2025-07-26T08:21:25.377901",
-        "action": "Spin",
-        "details": "Won 10 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:26.559765",
-        "action": "Spin",
-        "details": "Won 27 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:27.844896",
-        "action": "Spin",
-        "details": "Won 40 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:24:47.869623",
-        "action": "Spin",
-        "details": "Won 11 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:24:50.656590",
-        "action": "Spin",
-        "details": "Won 25 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:24:54.116944",
-        "action": "Spin",
-        "details": "Won 13 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:24:57.026074",
-        "action": "Spin",
-        "details": "Won 25 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:24:59.780824",
-        "action": "Spin",
-        "details": "Won 23 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:25:41.835203",
-        "action": "Exchange",
-        "details": "Exchanged 1000 points"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:21.597777",
-        "action": "Spin",
-        "details": "Won 22 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:23.874797",
-        "action": "Spin",
-        "details": "Won 24 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:25.172254",
-        "action": "Spin",
-        "details": "Won 23 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:26.065159",
-        "action": "Spin",
-        "details": "Won 21 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:27.163431",
-        "action": "Spin",
-        "details": "Won 30 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:27.940534",
-        "action": "Spin",
-        "details": "Won 11 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:28.517368",
-        "action": "Spin",
-        "details": "Won 17 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:29.402554",
-        "action": "Spin",
-        "details": "Won 45 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:29.983076",
-        "action": "Spin",
-        "details": "Won 14 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:32.405769",
-        "action": "Spin",
-        "details": "Won 24 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:34.044632",
-        "action": "Spin",
-        "details": "Won 11 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:35.383379",
-        "action": "Spin",
-        "details": "Won 14 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:36.594298",
-        "action": "Spin",
-        "details": "Won 23 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:37.795176",
-        "action": "Spin",
-        "details": "Won 41 points (Owner Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:41:39.026660",
-        "action": "Spin",
-        "details": "Won 13 points (Owner Spin)"
-      },
-      {
         "timestamp": "2025-08-03T06:41:40.206806",
         "action": "Spin",
         "details": "Won 18 points (Owner Spin)"
@@ -256,10 +136,130 @@
         "timestamp": "2025-08-03T13:58:32.446989",
         "action": "Spin",
         "details": "Won 155 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:24.090614",
+        "action": "Spin",
+        "details": "Won 289 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:29.272041",
+        "action": "Spin",
+        "details": "Won 281 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:30.786884",
+        "action": "Spin",
+        "details": "Won 254 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:31.925647",
+        "action": "Spin",
+        "details": "Won 201 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:33.657293",
+        "action": "Spin",
+        "details": "Won 332 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:35.363047",
+        "action": "Spin",
+        "details": "Won 173 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:36.786291",
+        "action": "Spin",
+        "details": "Won 100 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:38.106236",
+        "action": "Spin",
+        "details": "Won 136 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:39.615377",
+        "action": "Spin",
+        "details": "Won 288 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:40.947738",
+        "action": "Spin",
+        "details": "Won 194 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:42.284129",
+        "action": "Spin",
+        "details": "Won 166 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:43.511385",
+        "action": "Spin",
+        "details": "Won 279 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:44.576806",
+        "action": "Spin",
+        "details": "Won 110 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:45.614069",
+        "action": "Spin",
+        "details": "Won 253 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:04:46.706942",
+        "action": "Spin",
+        "details": "Won 269 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:06.071401",
+        "action": "Spin",
+        "details": "Won 180 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:07.551939",
+        "action": "Spin",
+        "details": "Won 129 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:08.496062",
+        "action": "Spin",
+        "details": "Won 217 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:10.098569",
+        "action": "Spin",
+        "details": "Won 233 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:11.239749",
+        "action": "Spin",
+        "details": "Won 140 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:12.334865",
+        "action": "Spin",
+        "details": "Won 117 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:13.613149",
+        "action": "Spin",
+        "details": "Won 295 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:14.719038",
+        "action": "Spin",
+        "details": "Won 282 MMK (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T14:05:16.388672",
+        "action": "Spin",
+        "details": "Won 171 MMK (Owner Spin)"
       }
     ],
-    "mmk": 155,
-    "total_spins_used": 1
+    "mmk": 244,
+    "total_spins_used": 25
   },
   "2010895578": {
     "user_id": 2010895578,

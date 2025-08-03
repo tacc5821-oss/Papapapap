@@ -290,7 +290,7 @@ async def event_confirm_callback(update: Update, context: ContextTypes.DEFAULT_T
         f"📊 Channels: {len(channels)}\n"
         f"👥 Participant Limit: {participant_limit} people\n"
         f"📢 Event is now active for all users.\n"
-        f"🎁 Reward: 200 points per completion",
+        f"🎁 Reward: 2000 MMK per completion",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
         ]])
@@ -404,7 +404,7 @@ async def exchange_confirm_callback(update: Update, context: ContextTypes.DEFAUL
         f"✅ Exchange approved!\n\n"
         f"Please send the receipt photo now.\n"
         f"👤 User: {exchange_info['username']}\n"
-        f"💸 Amount: {exchange_info['amount']} points"
+        f"💸 Amount: {exchange_info['amount']} MMK"
     )
 
 async def exchange_cancel_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -424,12 +424,14 @@ async def exchange_cancel_callback(update: Update, context: ContextTypes.DEFAULT
         await query.edit_message_text("❌ Exchange request not found or already processed.")
         return
     
-    # Refund points to user
+    # Refund MMK to user
     user_id = exchange_info["user_id"]
     amount = exchange_info["amount"]
     
     user_data = get_user_data(user_id)
-    update_user_data(user_id, {"points": user_data["points"] + amount})
+    current_mmk = user_data.get("mmk", 0)
+    new_mmk = current_mmk + amount
+    update_user_data(user_id, {"mmk": new_mmk})
     
     # Remove from pending exchanges
     del bot_state["pending_exchanges"][exchange_id]
@@ -440,14 +442,14 @@ async def exchange_cancel_callback(update: Update, context: ContextTypes.DEFAULT
         await context.bot.send_message(
             chat_id=user_id,
             text=f"❌ Exchange Request Rejected\n\n"
-                 f"Your exchange request for {amount} points has been rejected.\n"
-                 f"💰 Points have been refunded to your account.\n"
-                 f"💳 Current balance: {user_data['points'] + amount} points"
+                 f"Your exchange request for {amount} MMK has been rejected.\n"
+                 f"💰 MMK have been refunded to your account.\n"
+                 f"💳 Current balance: {new_mmk} MMK"
         )
     except Exception as e:
         logger.error(f"Failed to notify user about rejected exchange: {e}")
     
-    await query.edit_message_text(f"❌ Exchange request cancelled. Points refunded to user.")
+    await query.edit_message_text(f"❌ Exchange request cancelled. MMK refunded to user.")
 
 async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle receipt photo upload from admin."""
@@ -471,7 +473,7 @@ async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TY
         await context.bot.send_message(
             chat_id=user_id,
             text=f"✅ Exchange Completed!\n\n"
-                 f"💸 Amount: {amount} points\n"
+                 f"💸 Amount: {amount} MMK\n"
                  f"📧 Receipt attached below:"
         )
         
@@ -484,7 +486,7 @@ async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TY
         logger.error(f"Failed to send confirmation to user: {e}")
     
     # Add to user history
-    add_user_history(user_id, "Exchange", f"Exchanged {amount} points")
+    add_user_history(user_id, "Exchange", f"Exchanged {amount} MMK")
     
     # Log to group
     username = exchange_info["username"]
@@ -493,8 +495,8 @@ async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TY
     log_message = (
         f"✅ Exchange Completed\n"
         f"👤 {username} (ID: {user_id})\n"
-        f"💸 Amount: {amount} points\n"
-        f"💰 Total: {user_data['points']} points"
+        f"💸 Amount: {amount} MMK\n"
+        f"💰 Total: {user_data.get('mmk', 0)} MMK"
     )
     
     await log_to_group(context, log_message)
