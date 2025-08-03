@@ -186,7 +186,7 @@ async def show_help_options(query):
     await query.edit_message_text(
         help_text,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("💬 Join Support Group", url=f"https://t.me/joinchat/{abs(HELP_GROUP_ID)}")],
+            [InlineKeyboardButton("💬 Join Support Group", url="https://t.me/+QJb5Z2tH9ME3NDg9")],
             [InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")]
         ])
     )
