@@ -8,15 +8,19 @@ LOG_GROUP_ID = int(os.getenv("LOG_GROUP_ID", "-1002878767296"))
 # Spin system configuration
 DAILY_SPIN_LIMIT = 5
 SPIN_REWARDS = [
-    (10, 30, 0.9),   # min_points, max_points, probability
-    (30, 50, 0.5),
-    (50, 80, 0.3),
-    (80, 100, 0.1),
+    (100, 300, 0.9),   # min_mmk, max_mmk, probability (MMK instead of points)
+    (300, 500, 0.5),
+    (500, 800, 0.3),
+    (800, 1000, 0.1),
 ]
 
-# Exchange configuration
-EXCHANGE_AMOUNTS = [500, 1000]
-EVENT_REWARD_POINTS = 200
+# Exchange configuration (MMK amounts)
+EXCHANGE_AMOUNTS = [5000, 10000, 20000]  # MMK amounts
+EVENT_REWARD_MMK = 2000  # MMK instead of points
+
+# Referral system
+REFERRAL_BONUS_SPINS = 3
+HELP_GROUP_ID = -1002878767296  # Same as LOG_GROUP_ID for help support
 
 # Event configuration
 DEFAULT_EVENT_PARTICIPANT_LIMIT = 30

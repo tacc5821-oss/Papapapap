@@ -2,131 +2,11 @@
   "1735522859": {
     "user_id": 1735522859,
     "username": "Osamu1123",
-    "points": 508,
+    "points": 14,
     "spins_today": 0,
     "last_spin_date": "2025-08-03",
     "event_done": false,
     "history": [
-      {
-        "timestamp": "2025-07-26T07:58:08.497087",
-        "action": "Spin",
-        "details": "Won 10 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:09.389138",
-        "action": "Spin",
-        "details": "Won 12 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:10.276857",
-        "action": "Spin",
-        "details": "Won 4 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:11.163902",
-        "action": "Spin",
-        "details": "Won 11 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:12.289069",
-        "action": "Spin",
-        "details": "Won 5 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:13.163511",
-        "action": "Spin",
-        "details": "Won 8 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:14.058814",
-        "action": "Spin",
-        "details": "Won 10 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:14.981892",
-        "action": "Spin",
-        "details": "Won 8 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:15.871563",
-        "action": "Spin",
-        "details": "Won 5 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:16.793824",
-        "action": "Spin",
-        "details": "Won 10 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:17.951693",
-        "action": "Spin",
-        "details": "Won 2 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:18.870690",
-        "action": "Spin",
-        "details": "Won 7 points"
-      },
-      {
-        "timestamp": "2025-07-26T07:58:33.917466",
-        "action": "Spin",
-        "details": "Won 8 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:03:19.549618",
-        "action": "Spin",
-        "details": "Won 2 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:03:36.965202",
-        "action": "Spin",
-        "details": "Won 24 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:03:50.089789",
-        "action": "Spin",
-        "details": "Won 1 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:03:51.856979",
-        "action": "Spin",
-        "details": "Won 14 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:11:39.789534",
-        "action": "Event",
-        "details": "Completed event, earned 200 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:15.458523",
-        "action": "Spin",
-        "details": "Won 22 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:17.281104",
-        "action": "Spin",
-        "details": "Won 21 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:18.599224",
-        "action": "Spin",
-        "details": "Won 28 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:20.098110",
-        "action": "Spin",
-        "details": "Won 24 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:21.490828",
-        "action": "Spin",
-        "details": "Won 12 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:21:23.658032",
-        "action": "Spin",
-        "details": "Won 15 points"
-      },
       {
         "timestamp": "2025-07-26T08:21:25.377901",
         "action": "Spin",
@@ -256,222 +136,139 @@
         "timestamp": "2025-08-03T06:41:41.433715",
         "action": "Spin",
         "details": "Won 23 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:19.136626",
+        "action": "Spin",
+        "details": "Won 15 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:20.948073",
+        "action": "Spin",
+        "details": "Won 23 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:22.226878",
+        "action": "Spin",
+        "details": "Won 25 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:23.233002",
+        "action": "Spin",
+        "details": "Won 28 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:24.227515",
+        "action": "Spin",
+        "details": "Won 13 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:24.949295",
+        "action": "Spin",
+        "details": "Won 29 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:26.648770",
+        "action": "Spin",
+        "details": "Won 21 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:27.550729",
+        "action": "Spin",
+        "details": "Won 27 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:28.492569",
+        "action": "Spin",
+        "details": "Won 20 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:29.402411",
+        "action": "Spin",
+        "details": "Won 30 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:30.317158",
+        "action": "Spin",
+        "details": "Won 10 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:32.415878",
+        "action": "Spin",
+        "details": "Won 27 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:33.485764",
+        "action": "Spin",
+        "details": "Won 19 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:34.546889",
+        "action": "Spin",
+        "details": "Won 46 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:36.386838",
+        "action": "Spin",
+        "details": "Won 15 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:37.384765",
+        "action": "Spin",
+        "details": "Won 30 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:38.349772",
+        "action": "Spin",
+        "details": "Won 28 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:39.424116",
+        "action": "Spin",
+        "details": "Won 15 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:40.433084",
+        "action": "Spin",
+        "details": "Won 10 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:41.363907",
+        "action": "Spin",
+        "details": "Won 16 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:42.417759",
+        "action": "Spin",
+        "details": "Won 29 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:36:44.146205",
+        "action": "Spin",
+        "details": "Won 30 points (Owner Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T13:37:38.862500",
+        "action": "Exchange",
+        "details": "Exchanged 1000 points"
+      },
+      {
+        "timestamp": "2025-08-03T13:58:32.446989",
+        "action": "Spin",
+        "details": "Won 155 MMK (Owner Spin)"
       }
-    ]
+    ],
+    "mmk": 155,
+    "total_spins_used": 1
   },
   "2010895578": {
     "user_id": 2010895578,
     "username": "",
-    "points": 359,
+    "points": 239,
     "spins_today": 5,
     "last_spin_date": "2025-08-03",
     "event_done": true,
     "history": [
-      {
-        "timestamp": "2025-07-26T08:20:02.307132",
-        "action": "Exchange",
-        "details": "Exchanged 500 points"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:45.517199",
-        "action": "Spin",
-        "details": "Won 30 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:50.096009",
-        "action": "Spin",
-        "details": "Won 26 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:51.846512",
-        "action": "Spin",
-        "details": "Won 31 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:52.739039",
-        "action": "Spin",
-        "details": "Won 10 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:53.582453",
-        "action": "Spin",
-        "details": "Won 16 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:55.398323",
-        "action": "Spin",
-        "details": "Won 45 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:55.999811",
-        "action": "Spin",
-        "details": "Won 18 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:57.006241",
-        "action": "Spin",
-        "details": "Won 19 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:58.087422",
-        "action": "Spin",
-        "details": "Won 18 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:58.763968",
-        "action": "Spin",
-        "details": "Won 12 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:59.398521",
-        "action": "Spin",
-        "details": "Won 21 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:29:59.987114",
-        "action": "Spin",
-        "details": "Won 18 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:02.101702",
-        "action": "Spin",
-        "details": "Won 26 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:03.019145",
-        "action": "Spin",
-        "details": "Won 20 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:03.609179",
-        "action": "Spin",
-        "details": "Won 16 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:04.200119",
-        "action": "Spin",
-        "details": "Won 16 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:04.849261",
-        "action": "Spin",
-        "details": "Won 17 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:07.329867",
-        "action": "Spin",
-        "details": "Won 24 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:08.247475",
-        "action": "Spin",
-        "details": "Won 18 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:08.848174",
-        "action": "Spin",
-        "details": "Won 17 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T08:30:09.465866",
-        "action": "Spin",
-        "details": "Won 20 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-07-26T09:40:10.941968",
-        "action": "Exchange",
-        "details": "Exchanged 500 points"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:22.746494",
-        "action": "Spin",
-        "details": "Won 28 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:24.695874",
-        "action": "Spin",
-        "details": "Won 14 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:26.974687",
-        "action": "Spin",
-        "details": "Won 28 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:28.742719",
-        "action": "Spin",
-        "details": "Won 15 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:30.310130",
-        "action": "Spin",
-        "details": "Won 22 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:31.683882",
-        "action": "Spin",
-        "details": "Won 33 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:32.656013",
-        "action": "Spin",
-        "details": "Won 22 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:33.621836",
-        "action": "Spin",
-        "details": "Won 22 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:34.590824",
-        "action": "Spin",
-        "details": "Won 20 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:36.855370",
-        "action": "Spin",
-        "details": "Won 10 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:37.766699",
-        "action": "Spin",
-        "details": "Won 15 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:38.691458",
-        "action": "Spin",
-        "details": "Won 21 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:39.650618",
-        "action": "Spin",
-        "details": "Won 33 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:40.598850",
-        "action": "Spin",
-        "details": "Won 23 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:41.583452",
-        "action": "Spin",
-        "details": "Won 24 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:42.735302",
-        "action": "Spin",
-        "details": "Won 14 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:43.745756",
-        "action": "Spin",
-        "details": "Won 25 points (Bonus Spin)"
-      },
-      {
-        "timestamp": "2025-08-03T06:44:44.863153",
-        "action": "Spin",
-        "details": "Won 16 points (Bonus Spin)"
-      },
       {
         "timestamp": "2025-08-03T06:44:45.918710",
         "action": "Spin",
@@ -516,6 +313,211 @@
         "timestamp": "2025-08-03T06:47:56.265269",
         "action": "Exchange",
         "details": "Exchanged 500 points"
+      },
+      {
+        "timestamp": "2025-08-03T06:52:51.641727",
+        "action": "Spin",
+        "details": "Won 34 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:52:55.020798",
+        "action": "Spin",
+        "details": "Won 24 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:52:56.200597",
+        "action": "Spin",
+        "details": "Won 44 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:52:57.090784",
+        "action": "Spin",
+        "details": "Won 28 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:52:58.005095",
+        "action": "Spin",
+        "details": "Won 26 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:52:59.643719",
+        "action": "Spin",
+        "details": "Won 44 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:00.821028",
+        "action": "Spin",
+        "details": "Won 30 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:01.445625",
+        "action": "Spin",
+        "details": "Won 11 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:02.455703",
+        "action": "Spin",
+        "details": "Won 16 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:03.063894",
+        "action": "Spin",
+        "details": "Won 25 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:04.032845",
+        "action": "Spin",
+        "details": "Won 45 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:04.971203",
+        "action": "Spin",
+        "details": "Won 29 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:05.567622",
+        "action": "Spin",
+        "details": "Won 18 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:07.852828",
+        "action": "Spin",
+        "details": "Won 24 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:08.766825",
+        "action": "Spin",
+        "details": "Won 12 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:09.368660",
+        "action": "Spin",
+        "details": "Won 23 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:09.969832",
+        "action": "Spin",
+        "details": "Won 23 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:10.546674",
+        "action": "Spin",
+        "details": "Won 11 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:12.768555",
+        "action": "Spin",
+        "details": "Won 10 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:13.960740",
+        "action": "Spin",
+        "details": "Won 13 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:14.950054",
+        "action": "Spin",
+        "details": "Won 21 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:15.955006",
+        "action": "Spin",
+        "details": "Won 17 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:17.170700",
+        "action": "Spin",
+        "details": "Won 20 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:18.445863",
+        "action": "Spin",
+        "details": "Won 23 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:19.808621",
+        "action": "Spin",
+        "details": "Won 39 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:21.065730",
+        "action": "Spin",
+        "details": "Won 27 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:22.259101",
+        "action": "Spin",
+        "details": "Won 14 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:23.383494",
+        "action": "Spin",
+        "details": "Won 10 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:24.653020",
+        "action": "Spin",
+        "details": "Won 27 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:25.645640",
+        "action": "Spin",
+        "details": "Won 22 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:26.774986",
+        "action": "Spin",
+        "details": "Won 23 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:27.690665",
+        "action": "Spin",
+        "details": "Won 20 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:28.611448",
+        "action": "Spin",
+        "details": "Won 10 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:30.440311",
+        "action": "Spin",
+        "details": "Won 11 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:31.496387",
+        "action": "Spin",
+        "details": "Won 10 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:32.610941",
+        "action": "Spin",
+        "details": "Won 13 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:33.615203",
+        "action": "Spin",
+        "details": "Won 19 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:34.509030",
+        "action": "Spin",
+        "details": "Won 34 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:35.508952",
+        "action": "Spin",
+        "details": "Won 16 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:53:36.440190",
+        "action": "Spin",
+        "details": "Won 14 points (Bonus Spin)"
+      },
+      {
+        "timestamp": "2025-08-03T06:54:42.466758",
+        "action": "Exchange",
+        "details": "Exchanged 1000 points"
       }
     ],
     "spins_left": 0

@@ -65,11 +65,15 @@ def get_user_data(user_id):
         data[user_id_str] = {
             "user_id": user_id,
             "username": "",
-            "points": 0,
+            "mmk": 0,  # Changed from points to MMK
             "spins_today": 0,
+            "spins_left": 0,  # Bonus spins
             "last_spin_date": "",
             "event_done": False,
-            "history": []
+            "history": [],
+            "referred_by": None,  # Referral system
+            "referral_count": 0,  # How many people this user referred
+            "total_spins_used": 0  # For batch logging
         }
         save_user_data(data)
     

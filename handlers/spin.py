@@ -51,10 +51,15 @@ async def spin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Perform spin
     reward = calculate_spin_reward()
     
-    # Update user data based on spin type
-    new_points = user_data["points"] + reward
+    # Update user data based on spin type (MMK instead of points)
+    current_mmk = user_data.get("mmk", 0)
+    new_mmk = current_mmk + reward
+    current_total_spins = user_data.get("total_spins_used", 0)
     
-    update_data = {"points": new_points}
+    update_data = {
+        "mmk": new_mmk,
+        "total_spins_used": current_total_spins + 1
+    }
     
     if spin_type == "bonus":
         # Use bonus spin
@@ -72,15 +77,15 @@ async def spin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Add to history
     spin_source = "Bonus Spin" if spin_type == "bonus" else "Daily Spin" if spin_type == "daily" else "Owner Spin"
-    add_user_history(user.id, "Spin", f"Won {reward} points ({spin_source})")
+    add_user_history(user.id, "Spin", f"Won {reward} MMK ({spin_source})")
     
     # Show result with proper spin counts
     current_daily = spins_today + (1 if spin_type == "daily" else 0)
     
     result_text = (
         f"🎰 Spin Result!\n\n"
-        f"🏆 You won: {reward} points!\n"
-        f"💰 Total Points: {new_points}\n"
+        f"🏆 You won: {reward} MMK!\n"
+        f"💰 Total MMK: {new_mmk} MMK\n"
         f"🎁 Daily Spins: {current_daily}/{DAILY_SPIN_LIMIT if user.id != OWNER_ID else '∞'}\n"
         f"🎰 Bonus Spins: {remaining_bonus}"
     )
@@ -95,8 +100,9 @@ async def spin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
     
-    # Log to group
-    await log_spin_result(context, user, reward, new_points)
+    # Batch logging - only log every 5 spins to reduce spam
+    if current_total_spins % 5 == 0:
+        await log_spin_batch(context, user, new_mmk, current_total_spins)
 
 def calculate_spin_reward():
     """Calculate spin reward based on probability."""
@@ -113,15 +119,15 @@ def calculate_spin_reward():
     min_points, max_points, _ = SPIN_REWARDS[0]
     return random.randint(min_points, max_points)
 
-async def log_spin_result(context, user, reward, total_points):
-    """Log spin result to the log group."""
+async def log_spin_batch(context, user, total_mmk, total_spins):
+    """Log batch spin results to reduce spam - every 5 spins."""
     username = f"@{user.username}" if user.username else user.first_name
     
     log_message = (
-        f"🎰 Spin Result\n"
+        f"🎰 Spin Milestone\n"
         f"👤 {username} (ID: {user.id})\n"
-        f"🏆 Reward: {reward} Points\n"
-        f"💰 Total: {total_points} Points"
+        f"🎯 Total Spins: {total_spins}\n"
+        f"💰 Total MMK: {total_mmk} MMK"
     )
     
     await log_to_group(context, log_message)

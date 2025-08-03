@@ -2,12 +2,12 @@
 
 ## Overview
 
-This is a fully operational Telegram bot application (@giftwaychinese_bot) that implements a comprehensive points-based reward system with spinning, event participation, and point exchange features. The bot uses Python with the python-telegram-bot library and stores data in JSON files for persistence.
+This is a fully operational Telegram bot application (@giftwaychinese_bot) that implements a comprehensive MMK (Myanmar Kyat) currency-based reward system with spinning, event participation, point exchange features, referral system, and help support. The bot uses Python with the python-telegram-bot library and stores data in JSON files for persistence.
 
 **Current Status**: ✅ Running Successfully 
 **Bot Username**: @giftwaychinese_bot
 **Owner ID**: 1735522859
-**Last Updated**: July 26, 2025
+**Last Updated**: August 3, 2025
 
 ## User Preferences
 
@@ -39,12 +39,13 @@ Preferred communication style: Simple, everyday language.
 2. **config.py**: Configuration management
    - Bot tokens and IDs
    - Spin system configuration (limits, rewards, probabilities)
-   - Exchange amounts and file paths
+   - MMK exchange amounts and referral settings
+   - Help group configuration
 
 3. **database.py**: Data persistence layer
    - JSON file operations for user data and bot state
    - User data management functions
-   - Bot state tracking (events, exchanges)
+   - Bot state tracking (events, exchanges, referrals)
 
 ### Handler Modules
 
@@ -72,6 +73,7 @@ Preferred communication style: Simple, everyday language.
    - Event creation and management
    - Exchange approval/rejection
    - Admin-only access controls
+   - Add user spins feature (bonus spin distribution)
 
 ### Utility Modules
 
@@ -148,6 +150,34 @@ Preferred communication style: Simple, everyday language.
 - Input validation for Telegram links
 - Error handling and logging
 - No sensitive data stored in code (environment variables)
+
+## Recent Updates (August 2025)
+
+### Currency System Migration
+- **Points → MMK**: Converted entire system from points to Myanmar Kyat (MMK) currency
+- Updated all reward displays and calculations to use MMK
+- Modified exchange system to work with MMK amounts
+
+### Referral System
+- **Invite Friends**: Added referral link generation for each user
+- **One-time Bonus**: Each successful referral gives +3 spins (one-time per user)
+- **Referral Tracking**: Users can see their referral count in statistics
+- **Anti-abuse**: Referral links work only once per user to prevent abuse
+
+### User Interface Enhancements
+- **Help Button**: Added Myanmar language help button linking to support group
+- **Statistics Display**: Enhanced user stats showing MMK, referrals, total spins
+- **Menu Updates**: Updated all menu items to reflect MMK currency
+
+### Performance Optimizations
+- **Batch Logging**: Spin rewards now logged every 5 spins instead of individually
+- **Spin Tracking**: Added total spins counter for users
+- **Improved Referral Logic**: Optimized referral processing and notifications
+
+### Admin Features
+- **Add User Spins**: Admin can distribute bonus spins (1, 5, 10, 20) to users
+- **Event Participant Limits**: Events now have configurable participant limits
+- **Enhanced Exchange**: Payment method selection (KPay/Wave) with account details
 
 ## Development Notes
 

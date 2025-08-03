@@ -2,7 +2,7 @@ import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from database import get_user_data, update_user_data, load_bot_state, add_user_history
-from config import EVENT_REWARD_POINTS
+from config import EVENT_REWARD_MMK
 from utils.logger import log_to_group
 
 logger = logging.getLogger(__name__)
@@ -121,14 +121,15 @@ async def event_done_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
         return
     
     # Mark event as completed and give reward
-    new_points = user_data["points"] + EVENT_REWARD_POINTS
+    current_mmk = user_data.get("mmk", 0)
+    new_mmk = current_mmk + EVENT_REWARD_MMK
     update_user_data(user.id, {
-        "points": new_points,
+        "mmk": new_mmk,
         "event_done": True
     })
     
     # Add to history
-    add_user_history(user.id, "Event", f"Completed event, earned {EVENT_REWARD_POINTS} points")
+    add_user_history(user.id, "Event", f"Completed event, earned {EVENT_REWARD_MMK} MMK")
     
     # Add to participants list
     if "event_participants" not in bot_state:
@@ -148,25 +149,25 @@ async def event_done_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     await query.edit_message_text(
         f"🎯 Event Completed!\n\n"
         f"✅ Congratulations! You have successfully completed the event.\n"
-        f"🎁 Reward: {EVENT_REWARD_POINTS} points\n"
-        f"💰 Total Points: {new_points}",
+        f"🎁 Reward: {EVENT_REWARD_MMK} MMK\n"
+        f"💰 Total MMK: {new_mmk} MMK",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
         ]])
     )
     
     # Log to group
-    await log_event_completion(context, user, new_points)
+    await log_event_completion(context, user, new_mmk)
 
-async def log_event_completion(context, user, total_points):
+async def log_event_completion(context, user, total_mmk):
     """Log event completion to the log group."""
     username = f"@{user.username}" if user.username else user.first_name
     
     log_message = (
         f"🎯 Event Completed\n"
         f"👤 {username} (ID: {user.id})\n"
-        f"🎁 Rewarded: {EVENT_REWARD_POINTS} points\n"
-        f"💰 Total: {total_points} points"
+        f"🎁 Rewarded: {EVENT_REWARD_MMK} MMK\n"
+        f"💰 Total: {total_mmk} MMK"
     )
     
     await log_to_group(context, log_message)

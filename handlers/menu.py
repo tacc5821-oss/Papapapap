@@ -2,17 +2,29 @@ import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from database import get_user_data, update_user_data, reset_daily_spins
-from config import OWNER_ID, DAILY_SPIN_LIMIT
+from config import OWNER_ID, DAILY_SPIN_LIMIT, REFERRAL_BONUS_SPINS, HELP_GROUP_ID
 from datetime import date
+from utils.logger import log_to_group
 
 logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start command handler."""
+    """Start command handler with referral support."""
     user = update.effective_user
     
     # Reset daily spins if needed
     reset_daily_spins()
+    
+    # Handle referral if present (only once per user)
+    if context.args and len(context.args) > 0:
+        try:
+            referrer_id = int(context.args[0])
+            user_data = get_user_data(user.id)
+            # Only process referral if user hasn't been referred before
+            if not user_data.get('referred_by'):
+                await handle_referral(user.id, referrer_id, context)
+        except (ValueError, IndexError):
+            pass
     
     # Get or create user data
     user_data = get_user_data(user.id)
@@ -25,7 +37,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     welcome_text = (
         f"🎉 Welcome {user.first_name}!\n\n"
-        f"💰 Your Points: {user_data['points']}\n"
+        f"💰 Your MMK: {user_data.get('mmk', 0)} MMK\n"
         f"🎁 Daily Spins: {spins_today}/{DAILY_SPIN_LIMIT if user.id != OWNER_ID else '∞'}\n"
         f"🎰 Bonus Spins: {bonus_spins}\n\n"
         f"🎯 Choose an option from the menu below:"
@@ -42,10 +54,12 @@ def get_main_menu_keyboard(user_id):
     """Get main menu keyboard based on user privileges."""
     keyboard = [
         [InlineKeyboardButton("🎁 Spin", callback_data="spin")],
-        [InlineKeyboardButton("📤 Exchange Points", callback_data="exchange")],
+        [InlineKeyboardButton("💸 Exchange MMK", callback_data="exchange")],
         [InlineKeyboardButton("📋 Event", callback_data="event")],
-        [InlineKeyboardButton("📊 My Points", callback_data="my_points")],
-        [InlineKeyboardButton("📜 History", callback_data="history")]
+        [InlineKeyboardButton("📨 Invite Friends", callback_data="invite_friends")],
+        [InlineKeyboardButton("💰 My MMK", callback_data="my_points")],
+        [InlineKeyboardButton("📜 History", callback_data="history")],
+        [InlineKeyboardButton("❓ အကူအညီရယူရန်", callback_data="get_help")]
     ]
     
     # Add admin menu for owner
@@ -66,6 +80,10 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await show_my_points(query, user_data)
     elif query.data == "history":
         await show_history(query, user_data)
+    elif query.data == "invite_friends":
+        await show_invite_friends(query, user.id)
+    elif query.data == "get_help":
+        await show_help_options(query)
     elif query.data == "main_menu":
         # Return to main menu
         # Calculate spin information
@@ -75,7 +93,7 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         
         welcome_text = (
             f"🎉 Welcome {user.first_name}!\n\n"
-            f"💰 Your Points: {user_data['points']}\n"
+            f"💰 Your MMK: {user_data.get('mmk', 0)} MMK\n"
             f"🎁 Daily Spins: {spins_today}/{DAILY_SPIN_LIMIT if user.id != OWNER_ID else '∞'}\n"
             f"🎰 Bonus Spins: {bonus_spins}\n\n"
             f"🎯 Choose an option from the menu below:"
@@ -88,6 +106,91 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
+async def handle_referral(user_id, referrer_id, context):
+    """Handle referral when a new user joins via referral link."""
+    if user_id == referrer_id:  # Can't refer yourself
+        return
+    
+    user_data = get_user_data(user_id)
+    referrer_data = get_user_data(referrer_id)
+    
+    # Check if user was already referred
+    if user_data.get('referred_by'):
+        return  # User already used a referral link
+    
+    # Check if referrer exists
+    if not referrer_data:
+        return
+    
+    # Mark user as referred
+    update_user_data(user_id, {"referred_by": referrer_id})
+    
+    # Add bonus spins to referrer
+    current_spins = referrer_data.get('spins_left', 0)
+    referral_count = referrer_data.get('referral_count', 0)
+    
+    update_user_data(referrer_id, {
+        "spins_left": current_spins + REFERRAL_BONUS_SPINS,
+        "referral_count": referral_count + 1
+    })
+    
+    # Get user info
+    try:
+        user_info = await context.bot.get_chat(user_id)
+        username = f"@{user_info.username}" if user_info.username else user_info.first_name
+    except Exception:
+        username = "New User"
+    
+    # Notify referrer
+    try:
+        await context.bot.send_message(
+            chat_id=referrer_id,
+            text=f"🎉 {username} joined via your link! You got +{REFERRAL_BONUS_SPINS} spins.\n\n"
+                 f"🎰 Total bonus spins: {current_spins + REFERRAL_BONUS_SPINS}\n"
+                 f"👥 Total referrals: {referral_count + 1}"
+        )
+    except Exception as e:
+        logger.error(f"Failed to notify referrer: {e}")
+
+async def show_invite_friends(query, user_id):
+    """Show invite friends interface."""
+    user_data = get_user_data(user_id)
+    referral_count = user_data.get('referral_count', 0)
+    
+    invite_text = (
+        f"📨 Invite Friends → Get Spins\n\n"
+        f"👥 Your referrals: {referral_count}\n"
+        f"🎁 Each referral = +{REFERRAL_BONUS_SPINS} spins\n\n"
+        f"📎 Your referral link:\n"
+        f"https://t.me/giftwaychinese_bot?start={user_id}\n\n"
+        f"📢 Share this link with friends!\n"
+        f"When they start the bot, you'll get bonus spins."
+    )
+    
+    await query.edit_message_text(
+        invite_text,
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
+        ]])
+    )
+
+async def show_help_options(query):
+    """Show help options with group link."""
+    help_text = (
+        f"❓ အကူအညီရယူရန်\n\n"
+        f"📞 Questions? Need help?\n"
+        f"💬 Join our support group to ask questions and get help!\n\n"
+        f"🔗 Click the button below to join our support group:"
+    )
+    
+    await query.edit_message_text(
+        help_text,
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("💬 Join Support Group", url=f"https://t.me/joinchat/{abs(HELP_GROUP_ID)}")],
+            [InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")]
+        ])
+    )
+
 async def show_my_points(query, user_data):
     """Show user points and spins information."""
     from config import DAILY_SPIN_LIMIT
@@ -99,9 +202,11 @@ async def show_my_points(query, user_data):
     
     points_text = (
         f"📊 Your Statistics\n\n"
-        f"💰 Total Points: {user_data['points']}\n"
+        f"💰 Total MMK: {user_data.get('mmk', 0)} MMK\n"
         f"🎁 Spins Used Today: {spins_used}/{DAILY_SPIN_LIMIT}\n"
-        f"🔄 Spins Remaining: {spins_remaining}\n"
+        f"🎰 Bonus Spins: {user_data.get('spins_left', 0)}\n"
+        f"👥 Referrals: {user_data.get('referral_count', 0)}\n"
+        f"🎯 Total Spins: {user_data.get('total_spins_used', 0)}\n"
         f"🎯 Event Status: {'✅ Completed' if user_data.get('event_done') else '❌ Not Completed'}"
     )
     
