@@ -5,7 +5,7 @@ from config import BOT_TOKEN, OWNER_ID, LOG_GROUP_ID
 from database import init_database
 from handlers.menu import start, main_menu_callback
 from handlers.spin import spin_callback
-from handlers.exchange import exchange_callback, exchange_amount_callback
+from handlers.exchange import exchange_callback, exchange_amount_callback, handle_payment_method_selection
 from handlers.event import event_callback, event_done_callback
 from handlers.admin import admin_callback, event_confirm_callback, event_cancel_callback, exchange_confirm_callback, exchange_cancel_callback
 from utils.logger import setup_logging
@@ -30,6 +30,7 @@ def main():
     application.add_handler(CallbackQueryHandler(spin_callback, pattern="^spin$"))
     application.add_handler(CallbackQueryHandler(exchange_callback, pattern="^exchange$"))
     application.add_handler(CallbackQueryHandler(exchange_amount_callback, pattern="^exchange_[0-9]+$"))
+    application.add_handler(CallbackQueryHandler(handle_payment_method_selection, pattern="^payment_(kpay|wave)_[0-9]+$"))
     application.add_handler(CallbackQueryHandler(event_callback, pattern="^event$"))
     application.add_handler(CallbackQueryHandler(event_done_callback, pattern="^event_done$"))
     
@@ -50,8 +51,13 @@ def main():
     application.run_polling(allowed_updates=["message", "callback_query"])
 
 async def handle_admin_messages(update, context):
-    """Handle admin messages for event creation."""
+    """Handle admin messages for event creation and payment info."""
     from handlers.admin import handle_event_channels
+    from handlers.exchange import handle_payment_info_message
+    
+    # Try payment info handler first
+    await handle_payment_info_message(update, context)
+    # Then try admin event handler
     await handle_event_channels(update, context)
 
 async def handle_receipt_photo(update, context):
