@@ -2,7 +2,7 @@ import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from database import get_user_data, update_user_data, reset_daily_spins
-from config import OWNER_ID, DAILY_SPIN_LIMIT, REFERRAL_BONUS_SPINS, HELP_GROUP_ID
+from config import OWNER_ID, HELP_GROUP_ID, REFERRAL_BONUS_MMK
 from datetime import date
 from utils.logger import log_to_group
 
