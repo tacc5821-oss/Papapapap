@@ -45,7 +45,7 @@ def main():
 application.add_handler(CallbackQueryHandler(cash_out_callback, pattern="^cash_out_"))
 
     # Exchange MMK (စနစ်သစ်နှင့် ကိုက်ညီအောင် ပြင်ဆင်ထားပါသည်)
-    application.add_handler(CallbackQueryHandler(exchange_callback, pattern="^exchange$"))
+application.add_handler(CallbackQueryHandler(exchange_callback, pattern="^exchange$"))
     application.add_handler(CallbackQueryHandler(handle_payment_method_selection, pattern="^payment_"))
 
     # --- Admin/Owner Side Handlers ---
