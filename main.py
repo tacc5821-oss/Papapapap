@@ -6,7 +6,7 @@ from config import BOT_TOKEN, OWNER_ID
 from database import init_database
 # handlers.menu မှ လိုအပ်သော function များအားလုံးကို import လုပ်ထားပါသည်
 from handlers.menu import start, main_menu_callback, show_my_points, show_history, show_invite_friends, show_help_options 
-from handlers.crash_game import crash_game_start, crash_game_bet_handler, cash_out_callback 
+from handlers.crash_game import crash_game_start, cash_out_callback
 from handlers.exchange import exchange_callback, exchange_manual_amount_handler, handle_payment_method_selection, handle_payment_info_message
 from handlers.jackpot import jackpot_control_callback, jackpot_done_callback
 from handlers.admin import (
