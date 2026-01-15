@@ -1,13 +1,19 @@
 import logging
 import os
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters
-from config import BOT_TOKEN, OWNER_ID, LOG_GROUP_ID
+from config import BOT_TOKEN, OWNER_ID
 from database import init_database
 from handlers.menu import start, main_menu_callback
-from handlers.spin import spin_callback
-from handlers.exchange import exchange_callback, exchange_amount_callback, handle_payment_method_selection
-from handlers.event import event_callback, event_done_callback
-from handlers.admin import admin_callback, event_confirm_callback, event_cancel_callback, exchange_confirm_callback, exchange_cancel_callback
+# Spin အစား Crash Game handler ကိုသုံးမည်
+from handlers.crash_game import crash_game_start, crash_game_bet_handler, cash_out_callback 
+from handlers.exchange import exchange_request_callback, exchange_manual_amount_handler
+from handlers.jackpot import jackpot_control_callback, jackpot_done_callback
+from handlers.admin import (
+    admin_callback, 
+    exchange_confirm_callback, 
+    exchange_cancel_callback,
+    handle_receipt_upload # Slip ပို့ရန်
+)
 from utils.logger import setup_logging
 
 # Set up logging
@@ -25,45 +31,54 @@ def main():
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
 
-    # Add callback query handlers
-    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern="^(main_menu|my_points|history|invite_friends|get_help)$"))
-    application.add_handler(CallbackQueryHandler(spin_callback, pattern="^spin$"))
-    application.add_handler(CallbackQueryHandler(exchange_callback, pattern="^exchange$"))
-    application.add_handler(CallbackQueryHandler(exchange_amount_callback, pattern="^exchange_[0-9]+$"))
-    application.add_handler(CallbackQueryHandler(handle_payment_method_selection, pattern="^payment_(kpay|wave)_[0-9]+$"))
-    application.add_handler(CallbackQueryHandler(event_callback, pattern="^event$"))
-    application.add_handler(CallbackQueryHandler(event_done_callback, pattern="^event_done$"))
+    # --- User Side Handlers ---
+    # Main Menu & Basic Actions
+    application.add_handler(CallbackQueryHandler(main_menu_callback, pattern="^(main_menu|history|invite_friends|get_help)$"))
     
-    # Admin handlers
-    application.add_handler(CallbackQueryHandler(admin_callback, pattern="^(admin_|event_limit_|add_spins_)"))
-    application.add_handler(CallbackQueryHandler(event_confirm_callback, pattern="^event_confirm_"))
-    application.add_handler(CallbackQueryHandler(event_cancel_callback, pattern="^event_cancel_"))
+    # Crash Game (Spin နေရာမှာ အစားထိုးခြင်း)
+    application.add_handler(CallbackQueryHandler(crash_game_start, pattern="^crash_game$"))
+    application.add_handler(CallbackQueryHandler(cash_out_callback, pattern="^cash_out$"))
+
+    # Exchange MMK (Amount ရိုက်ထည့်သောစနစ်)
+    application.add_handler(CallbackQueryHandler(exchange_request_callback, pattern="^exchange$"))
+
+    # --- Admin/Owner Side Handlers ---
+    # Jackpot Control (Event နေရာမှာ အစားထိုးခြင်း)
+    application.add_handler(CallbackQueryHandler(jackpot_control_callback, pattern="^jackpot_control$"))
+    application.add_handler(CallbackQueryHandler(jackpot_done_callback, pattern="^jackpot_done$"))
+    
+    # Admin Exchange Approval & Rejection
     application.add_handler(CallbackQueryHandler(exchange_confirm_callback, pattern="^exchange_confirm_"))
     application.add_handler(CallbackQueryHandler(exchange_cancel_callback, pattern="^exchange_cancel_"))
+    application.add_handler(CallbackQueryHandler(admin_callback, pattern="^admin_"))
 
-    # Add message handlers for admin functions
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_messages))
+    # --- Message & Photo Handlers ---
+    # User ဆီမှ ဂိမ်းလောင်းကြေး နှင့် Exchange Amount လက်ခံရန်
+    # Admin ဆီမှ Slip ပုံ လက်ခံရန်
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_all_text_inputs))
     application.add_handler(MessageHandler(filters.PHOTO, handle_receipt_photo))
 
-    logger.info("Bot started successfully")
+    logger.info("Bot started successfully with Crash Game & Manual Exchange")
     
     # Run the bot
     application.run_polling(allowed_updates=["message", "callback_query"])
 
-async def handle_admin_messages(update, context):
-    """Handle admin messages for event creation and payment info."""
-    from handlers.admin import handle_event_channels
-    from handlers.exchange import handle_payment_info_message
+async def handle_all_text_inputs(update, context):
+    """စာရိုက်ပို့သမျှကို ခွဲခြားပြီး Handle လုပ်ပေးသည့်နေရာ"""
+    user_data = context.user_data
     
-    # Try payment info handler first
-    await handle_payment_info_message(update, context)
-    # Then try admin event handler
-    await handle_event_channels(update, context)
+    # အကယ်၍ User က လောင်းကြေးရိုက်နေခြင်းဖြစ်လျှင်
+    if user_data.get("waiting_for_bet"):
+        await crash_game_bet_handler(update, context)
+        
+    # အကယ်၍ User က Exchange Amount ရိုက်နေခြင်းဖြစ်လျှင်
+    elif user_data.get("waiting_for_exchange_amount"):
+        await exchange_manual_amount_handler(update, context)
 
 async def handle_receipt_photo(update, context):
-    """Handle receipt photos from admin."""
-    from handlers.admin import handle_receipt_upload
-    await handle_receipt_upload(update, context)
+    """Admin ဆီမှ Slip ပုံကို လက်ခံပြီး User ဆီ ပို့ပေးခြင်း"""
+    if str(update.effective_user.id) == str(OWNER_ID):
+        await handle_receipt_upload(update, context)
 
 if __name__ == '__main__':
     main()
