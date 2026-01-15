@@ -74,7 +74,7 @@ A comprehensive Telegram bot with spin system, point exchange, event management,
 ## 🚀 How to Use
 
 ### For Users:
-1. Search for `@giftwaychinese_bot` on Telegram
+1. Search for `****` on Telegram
 2. Send `/start` command
 3. Use inline keyboard buttons to navigate
 4. Spin daily for points
@@ -95,7 +95,7 @@ All activities are automatically logged to the group chat:
 - **Exchange Completions**: User, amount exchanged, remaining points
 
 ## 🔒 Security Features
-- Owner-only admin access (ID: 1735522859)
+- Owner-only admin access (ID: *****)
 - Input validation for Telegram links
 - Error handling and logging
 - No sensitive data in code (environment variables)
