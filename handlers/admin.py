@@ -2,559 +2,183 @@ import logging
 import re
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from database import load_bot_state, save_bot_state, get_user_data, update_user_data, add_user_history
+from database import load_bot_state, save_bot_state, get_user_data, update_user_data, add_user_history, get_all_users
 from config import OWNER_ID
-from utils.logger import log_to_group
 
 logger = logging.getLogger(__name__)
 
-# Store admin state
-admin_states = {}
-
 async def admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle admin panel callback."""
+    """Admin Panel နှင့် လုပ်ဆောင်ချက်များကို ထိန်းချုပ်ခြင်း"""
     query = update.callback_query
     await query.answer()
     
-    user = query.from_user
-    
-    # Check if user is owner
-    if user.id != OWNER_ID:
-        await query.edit_message_text("❌ Access denied. You are not authorized.")
+    if query.from_user.id != OWNER_ID:
+        await query.edit_message_text("❌ Access denied.")
         return
     
     if query.data == "admin_panel":
         await show_admin_panel(query)
-    elif query.data == "admin_start_event":
-        await start_event_creation(query, context)
-    elif query.data == "admin_view_participants":
-        await view_event_participants(query)
-    elif query.data == "admin_cancel_event":
-        await cancel_current_event(query, context)
-    elif query.data.startswith("event_limit_"):
-        await handle_limit_selection(query, context)
-    elif query.data == "admin_add_spins":
-        await show_add_spins_menu(query)
-    elif query.data.startswith("add_spins_"):
-        await handle_spin_amount_selection(query)
+    elif query.data == "admin_edit_balance":
+        await admin_edit_balance_start(query, context)
+    elif query.data == "admin_view_all_users":
+        await view_all_users_list(query)
 
 async def show_admin_panel(query):
-    """Show admin panel."""
+    """Admin ပင်မစာမျက်နှာ"""
     bot_state = load_bot_state()
-    current_event = bot_state.get("current_event")
+    pending_exchanges = bot_state.get("pending_exchanges", {})
+    pending_count = len(pending_exchanges)
     
-    admin_text = "🧑‍💼 Admin Panel\n\n"
-    
-    if current_event:
-        participant_limit = current_event.get("participant_limit", 30)
-        current_participants = len(bot_state.get('event_participants', []))
-        admin_text += f"📢 Current Event: Active\n"
-        admin_text += f"👥 Participants: {current_participants}/{participant_limit}\n"
-        admin_text += f"📊 Channels: {len(current_event.get('channels', []))}\n\n"
-    else:
-        admin_text += f"📢 Current Event: None\n\n"
-    
-    keyboard = []
-    
-    if not current_event:
-        keyboard.append([InlineKeyboardButton("📢 Start Event", callback_data="admin_start_event")])
-    else:
-        keyboard.append([InlineKeyboardButton("📄 View Participants", callback_data="admin_view_participants")])
-        keyboard.append([InlineKeyboardButton("❌ Cancel Event", callback_data="admin_cancel_event")])
-    
-    keyboard.append([InlineKeyboardButton("🎰 Add User Spins", callback_data="admin_add_spins")])
-    keyboard.append([InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")])
-    
-    await query.edit_message_text(
-        admin_text,
-        reply_markup=InlineKeyboardMarkup(keyboard)
+    admin_text = (
+        "🧑‍💼 **Admin Control Panel**\n\n"
+        f"⏳ စစ်ဆေးရန် ငွေထုတ်လွှာ: {pending_count} ခု\n"
+        "--------------------------\n"
+        "Owner အနေဖြင့် အောက်ပါတို့ကို လုပ်ဆောင်နိုင်သည် -"
     )
-
-async def start_event_creation(query, context):
-    """Start event creation process."""
-    admin_states[query.from_user.id] = "waiting_for_limit"
-    
-    from config import EVENT_PARTICIPANT_LIMITS
-    
-    # Show participant limit selection
-    limit_text = "📢 Create New Event\n\n👥 Select participant limit for this event:"
-    
-    keyboard = []
-    for limit in EVENT_PARTICIPANT_LIMITS:
-        keyboard.append([InlineKeyboardButton(f"{limit} people", callback_data=f"event_limit_{limit}")])
-    
-    keyboard.append([InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")])
-    
-    await query.edit_message_text(
-        limit_text,
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
-
-async def handle_limit_selection(query, context):
-    """Handle participant limit selection."""
-    limit = int(query.data.split("_")[2])
-    
-    # Store the selected limit
-    bot_state = load_bot_state()
-    bot_state['pending_event_limit'] = limit
-    save_bot_state(bot_state)
-    
-    admin_states[query.from_user.id] = "waiting_for_channels"
-    
-    await query.edit_message_text(
-        f"📢 Create New Event\n\n"
-        f"👥 Participant Limit: {limit} people\n\n"
-        f"Please send up to 10 Telegram channel links.\n"
-        f"Send them one by one or all at once.\n\n"
-        f"Example:\n"
-        f"https://t.me/channel1\n"
-        f"https://t.me/channel2\n\n"
-        f"Type /cancel to cancel event creation.",
-        reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")
-        ]])
-    )
-
-async def handle_event_channels(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle channel links from admin."""
-    user = update.effective_user
-    
-    if user.id != OWNER_ID:
-        return
-    
-    admin_state = admin_states.get(user.id)
-    if admin_state not in ["waiting_for_channels", "waiting_for_user_id"]:
-        return
-    
-    text = update.message.text
-    
-    if text == "/cancel":
-        admin_states.pop(user.id, None)
-        bot_state = load_bot_state()
-        bot_state.pop('pending_event_channels', None)
-        bot_state.pop('pending_spin_amount', None)
-        save_bot_state(bot_state)
-        await update.message.reply_text("❌ Operation cancelled.")
-        return
-    
-    # Handle user ID input for adding spins
-    if admin_state == "waiting_for_user_id":
-        try:
-            target_user_id = int(text.strip())
-        except ValueError:
-            await update.message.reply_text(
-                "❌ Invalid User ID format.\n"
-                "Please send a valid number (e.g., 1234567890)"
-            )
-            return
-        
-        # Get spin amount from bot state
-        bot_state = load_bot_state()
-        spin_amount = bot_state.get('pending_spin_amount', 1)
-        
-        # Add spins to user
-        user_data = get_user_data(target_user_id)
-        current_spins = user_data.get("spins_left", 0)
-        new_spins = current_spins + spin_amount
-        
-        update_user_data(target_user_id, {"spins_left": new_spins})
-        
-        # Get target user info
-        try:
-            target_user = await context.bot.get_chat(target_user_id)
-            username = target_user.username or target_user.first_name or "Unknown"
-        except Exception:
-            username = "Unknown User"
-        
-        # Notify target user
-        try:
-            await context.bot.send_message(
-                chat_id=target_user_id,
-                text=f"🎁 Bonus Spins Added!\n\n"
-                     f"🎰 You received {spin_amount} bonus spins!\n"
-                     f"💫 Total spins available: {new_spins}\n\n"
-                     f"🎯 Use /start to spin now!"
-            )
-        except Exception as e:
-            logger.error(f"Failed to notify user about bonus spins: {e}")
-        
-        # Log to group
-        log_message = (
-            f"🎰 Bonus Spins Added\n"
-            f"👤 {username} (ID: {target_user_id})\n"
-            f"🎯 Amount: {spin_amount} spins\n"
-            f"💫 Total: {new_spins} spins"
-        )
-        await log_to_group(context, log_message)
-        
-        # Clear admin state
-        admin_states.pop(user.id, None)
-        bot_state.pop('pending_spin_amount', None)
-        save_bot_state(bot_state)
-        
-        await update.message.reply_text(
-            f"✅ Successfully added {spin_amount} spins!\n\n"
-            f"👤 User: {username}\n"
-            f"🎰 Added: {spin_amount} spins\n"
-            f"💫 Total: {new_spins} spins"
-        )
-        return
-    
-    # Extract Telegram channel links
-    channel_pattern = r'https://t\.me/[a-zA-Z0-9_]+'
-    channels = re.findall(channel_pattern, text)
-    
-    if not channels:
-        await update.message.reply_text(
-            "❌ No valid Telegram channel links found.\n"
-            "Please send links in format: https://t.me/channelname"
-        )
-        return
-    
-    if len(channels) > 10:
-        channels = channels[:10]
-        await update.message.reply_text(
-            f"⚠️ Too many channels! Using first 10 channels only."
-        )
-    
-    # Show preview
-    preview_text = "📋 Event Preview\n\n📋 Join the following channels and click ✅ Done when finished:\n\n"
-    
-    keyboard = []
-    for i, channel in enumerate(channels):
-        channel_name = f"Channel {i+1}"
-        keyboard.append([InlineKeyboardButton(f"📎 {channel_name}", url=channel)])
-    
-    keyboard.append([InlineKeyboardButton("✅ Done", callback_data="event_done")])
-    
-    preview_text += "\n🕑 Status: Waiting for event confirmation."
-    
-    keyboard.append([
-        InlineKeyboardButton("✅ Confirm Event", callback_data=f"event_confirm_new"),
-        InlineKeyboardButton("❌ Cancel Event", callback_data="event_cancel_creation")
-    ])
-    
-    # Store channels in bot state temporarily
-    bot_state = load_bot_state()
-    bot_state['pending_event_channels'] = channels
-    save_bot_state(bot_state)
-    
-    admin_states[user.id] = "confirming_event"
-    
-    await update.message.reply_text(
-        preview_text,
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
-
-async def event_confirm_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle event confirmation."""
-    query = update.callback_query
-    await query.answer()
-    
-    if query.from_user.id != OWNER_ID:
-        return
-    
-    # Get channels and limit from bot state
-    bot_state = load_bot_state()
-    channels = bot_state.get('pending_event_channels', [])
-    participant_limit = bot_state.get('pending_event_limit', 30)
-    
-    if not channels:
-        await query.edit_message_text("❌ No channels found. Please try again.")
-        return
-    
-    # Create event with participant limit
-    bot_state["current_event"] = {
-        "channels": channels,
-        "participant_limit": participant_limit,
-        "created_at": str(query.message.date)
-    }
-    bot_state["event_participants"] = []
-    save_bot_state(bot_state)
-    
-    # Reset all users' event status
-    from database import load_user_data, save_user_data
-    user_data = load_user_data()
-    for user_id in user_data:
-        user_data[user_id]["event_done"] = False
-    save_user_data(user_data)
-    
-    # Clear admin state and pending data
-    admin_states.pop(query.from_user.id, None)
-    bot_state.pop('pending_event_channels', None)
-    bot_state.pop('pending_event_limit', None)
-    save_bot_state(bot_state)
-    
-    await query.edit_message_text(
-        f"✅ Event Created Successfully!\n\n"
-        f"📊 Channels: {len(channels)}\n"
-        f"👥 Participant Limit: {participant_limit} people\n"
-        f"📢 Event is now active for all users.\n"
-        f"🎁 Reward: 2000 MMK per completion",
-        reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
-        ]])
-    )
-    
-    # Notify all users about new event (this would require broadcasting logic)
-    logger.info(f"New event created with {len(channels)} channels")
-
-async def event_cancel_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle event cancellation."""
-    query = update.callback_query
-    await query.answer()
-    
-    if query.from_user.id != OWNER_ID:
-        return
-    
-    if query.data == "event_cancel_creation":
-        # Cancel event creation
-        admin_states.pop(query.from_user.id, None)
-        bot_state = load_bot_state()
-        bot_state.pop('pending_event_channels', None)
-        save_bot_state(bot_state)
-        
-        await query.edit_message_text(
-            "❌ Event creation cancelled.",
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
-            ]])
-        )
-    else:
-        # Cancel current event
-        await cancel_current_event(query, None)
-
-async def cancel_current_event(query, context):
-    """Cancel current active event."""
-    bot_state = load_bot_state()
-    
-    if not bot_state.get("current_event"):
-        await query.edit_message_text(
-            "❌ No active event to cancel.",
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
-            ]])
-        )
-        return
-    
-    # Clear event
-    bot_state["current_event"] = None
-    bot_state["event_participants"] = []
-    save_bot_state(bot_state)
-    
-    await query.edit_message_text(
-        "❌ Event cancelled successfully.",
-        reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
-        ]])
-    )
-
-async def view_event_participants(query):
-    """View event participants."""
-    bot_state = load_bot_state()
-    participants = bot_state.get("event_participants", [])
-    
-    if not participants:
-        await query.edit_message_text(
-            "📄 Event Participants\n\n❌ No participants yet.",
-            reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
-            ]])
-        )
-        return
-    
-    participants_text = f"📄 Event Participants ({len(participants)})\n\n"
-    
-    for i, participant in enumerate(participants[-20:], 1):  # Show last 20
-        username = participant.get("username", "Unknown")
-        user_id = participant.get("user_id", "Unknown")
-        participants_text += f"{i}. {username} (ID: {user_id})\n"
-    
-    if len(participants) > 20:
-        participants_text += f"\n... and {len(participants) - 20} more"
-    
-    await query.edit_message_text(
-        participants_text,
-        reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton("🔙 Back to Admin Panel", callback_data="admin_panel")
-        ]])
-    )
-
-async def exchange_confirm_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle exchange confirmation from admin."""
-    query = update.callback_query
-    await query.answer()
-    
-    if query.from_user.id != OWNER_ID:
-        return
-    
-    exchange_id = query.data.split("_", 2)[2]
-    bot_state = load_bot_state()
-    
-    exchange_info = bot_state.get("pending_exchanges", {}).get(exchange_id)
-    
-    if not exchange_info:
-        await query.edit_message_text("❌ Exchange request not found or already processed.")
-        return
-    
-    # Store exchange info for receipt upload
-    context.user_data['pending_receipt'] = exchange_info
-    
-    await query.edit_message_text(
-        f"✅ Exchange approved!\n\n"
-        f"Please send the receipt photo now.\n"
-        f"👤 User: {exchange_info['username']}\n"
-        f"💸 Amount: {exchange_info['amount']} MMK"
-    )
-
-async def exchange_cancel_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle exchange cancellation from admin."""
-    query = update.callback_query
-    await query.answer()
-    
-    if query.from_user.id != OWNER_ID:
-        return
-    
-    exchange_id = query.data.split("_", 2)[2]
-    bot_state = load_bot_state()
-    
-    exchange_info = bot_state.get("pending_exchanges", {}).get(exchange_id)
-    
-    if not exchange_info:
-        await query.edit_message_text("❌ Exchange request not found or already processed.")
-        return
-    
-    # Refund MMK to user
-    user_id = exchange_info["user_id"]
-    amount = exchange_info["amount"]
-    
-    user_data = get_user_data(user_id)
-    current_mmk = user_data.get("mmk", 0)
-    new_mmk = current_mmk + amount
-    update_user_data(user_id, {"mmk": new_mmk})
-    
-    # Remove from pending exchanges
-    del bot_state["pending_exchanges"][exchange_id]
-    save_bot_state(bot_state)
-    
-    # Notify user
-    try:
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=f"❌ Exchange Request Rejected\n\n"
-                 f"Your exchange request for {amount} MMK has been rejected.\n"
-                 f"💰 MMK have been refunded to your account.\n"
-                 f"💳 Current balance: {new_mmk} MMK"
-        )
-    except Exception as e:
-        logger.error(f"Failed to notify user about rejected exchange: {e}")
-    
-    await query.edit_message_text(f"❌ Exchange request cancelled. MMK refunded to user.")
-
-async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle receipt photo upload from admin."""
-    if update.effective_user.id != OWNER_ID:
-        return
-    
-    exchange_info = context.user_data.get('pending_receipt')
-    
-    if not exchange_info:
-        await update.message.reply_text("❌ No pending exchange found.")
-        return
-    
-    # Get the photo
-    photo = update.message.photo[-1]  # Get highest resolution
-    
-    user_id = exchange_info["user_id"]
-    amount = exchange_info["amount"]
-    
-    # Send confirmation and receipt to user
-    try:
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=f"✅ Exchange Completed!\n\n"
-                 f"💸 Amount: {amount} MMK\n"
-                 f"📧 Receipt attached below:"
-        )
-        
-        await context.bot.send_photo(
-            chat_id=user_id,
-            photo=photo.file_id,
-            caption="📧 Exchange Receipt"
-        )
-    except Exception as e:
-        logger.error(f"Failed to send confirmation to user: {e}")
-    
-    # Add to user history
-    add_user_history(user_id, "Exchange", f"Exchanged {amount} MMK")
-    
-    # Log to group
-    username = exchange_info["username"]
-    user_data = get_user_data(user_id)
-    
-    log_message = (
-        f"✅ Exchange Completed\n"
-        f"👤 {username} (ID: {user_id})\n"
-        f"💸 Amount: {amount} MMK\n"
-        f"💰 Total: {user_data.get('mmk', 0)} MMK"
-    )
-    
-    await log_to_group(context, log_message)
-    
-    # Remove from pending exchanges
-    exchange_id = f"{user_id}_{amount}"
-    bot_state = load_bot_state()
-    bot_state.get("pending_exchanges", {}).pop(exchange_id, None)
-    save_bot_state(bot_state)
-    
-    # Clear admin state
-    context.user_data.pop('pending_receipt', None)
-    
-    await update.message.reply_text(f"✅ Exchange completed successfully!")
-
-async def show_add_spins_menu(query):
-    """Show add spins menu with spin amount options."""
-    if query.from_user.id != OWNER_ID:
-        return
-    
-    admin_states[query.from_user.id] = "waiting_for_spin_amount"
-    
-    spin_text = "🎰 Add User Spins\n\n" \
-                "Select how many spins to add:"
     
     keyboard = [
-        [InlineKeyboardButton("🎰 1 Spin", callback_data="add_spins_1")],
-        [InlineKeyboardButton("🎰 5 Spins", callback_data="add_spins_5")], 
-        [InlineKeyboardButton("🎰 10 Spins", callback_data="add_spins_10")],
-        [InlineKeyboardButton("🎰 20 Spins", callback_data="add_spins_20")],
-        [InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")]
+        [InlineKeyboardButton(f"📥 Pending Requests ({pending_count})", callback_data="admin_view_pending")],
+        [InlineKeyboardButton("⚙️ Edit User Balance (+/-)", callback_data="admin_edit_balance")],
+        [InlineKeyboardButton("👥 View All Users", callback_data="admin_view_all_users")],
+        [InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")]
     ]
     
+    await query.edit_message_text(admin_text, reply_markup=InlineKeyboardMarkup(keyboard))
+
+# --- MMK Balance Adjustment Logic ---
+
+async def admin_edit_balance_start(query, context):
+    """User ID တောင်းခံခြင်း"""
+    context.user_data["admin_waiting_for_uid"] = True
     await query.edit_message_text(
-        spin_text,
-        reply_markup=InlineKeyboardMarkup(keyboard)
+        "📝 **Edit User Balance**\n\n"
+        "ငွေပြင်ဆင်လိုသော User ၏ **Telegram ID** ကို ရိုက်ပို့ပေးပါ -"
     )
 
-async def handle_spin_amount_selection(query):
-    """Handle spin amount selection."""
-    if query.from_user.id != OWNER_ID:
+async def handle_admin_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Owner ရိုက်ပို့လိုက်သော စာသားများကို စစ်ဆေးခြင်း"""
+    if update.effective_user.id != OWNER_ID: return
+    text = update.message.text.strip()
+
+    # Step 1: Handle User ID Input
+    if context.user_data.get("admin_waiting_for_uid"):
+        if not text.isdigit():
+            await update.message.reply_text("❌ ID သည် ဂဏန်းသီးသန့် ဖြစ်ရပါမည်။")
+            return
+        
+        target_uid = int(text)
+        target_data = get_user_data(target_uid)
+        
+        context.user_data["admin_target_uid"] = target_uid
+        context.user_data["admin_waiting_for_uid"] = False
+        context.user_data["admin_waiting_for_amount"] = True
+        
+        await update.message.reply_text(
+            f"👤 User: {target_data.get('username') or 'No Username'}\n"
+            f"💰 Current Balance: {target_data.get('mmk', 0)} MMK\n\n"
+            "တိုးလို/လျှော့လိုသော ပမာဏကို ရိုက်ပါ -\n"
+            "(ဥပမာ: `10000` တိုးရန် သို့မဟုတ် `-5000` လျှော့ရန်)"
+        )
         return
+
+    # Step 2: Handle Amount Adjustment
+    if context.user_data.get("admin_waiting_for_amount"):
+        try:
+            amount_change = int(text)
+            target_uid = context.user_data.get("admin_target_uid")
+            target_data = get_user_data(target_uid)
+            
+            new_balance = max(0, target_data.get('mmk', 0) + amount_change)
+            update_user_data(target_uid, {"mmk": new_balance})
+            add_user_history(target_uid, "Admin Adjustment", f"{amount_change} MMK by Owner")
+            
+            context.user_data["admin_waiting_for_amount"] = False
+            await update.message.reply_text(f"✅ အောင်မြင်ပါသည်။\nBalance အသစ်: {new_balance} MMK")
+            
+            # Notify User
+            try:
+                await context.bot.send_message(target_uid, f"📢 Owner မှ သင့် Balance ကို {amount_change} MMK ပြင်ဆင်လိုက်ပါသည်။\nလက်ရှိ: {new_balance} MMK")
+            except: pass
+        except ValueError:
+            await update.message.reply_text("❌ ဂဏန်းအမှန်အတိုင်း ရိုက်ပေးပါ။")
+
+# --- Exchange (Withdrawal) Management ---
+
+async def exchange_confirm_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """ငွေထုတ်လွှာကို အတည်ပြုရန် Slip တောင်းခြင်း"""
+    query = update.callback_query
+    exchange_id = query.data.split("_")[2]
     
-    spin_amount = int(query.data.split("_")[2])
-    
-    # Store selected spin amount
     bot_state = load_bot_state()
-    bot_state['pending_spin_amount'] = spin_amount
-    save_bot_state(bot_state)
+    exchange_info = bot_state.get("pending_exchanges", {}).get(exchange_id)
     
-    admin_states[query.from_user.id] = "waiting_for_user_id"
+    if not exchange_info:
+        await query.edit_message_text("❌ ဤတောင်းဆိုမှုသည် မရှိတော့ပါ။")
+        return
+        
+    context.user_data['pending_receipt_info'] = exchange_info
+    context.user_data['pending_exchange_id'] = exchange_id
     
     await query.edit_message_text(
-        f"🎰 Add {spin_amount} Spins\n\n"
-        f"Please send the User ID to add spins to.\n\n"
-        f"Example: 1234567890\n\n"
-        f"Type /cancel to cancel.",
-        reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton("❌ Cancel", callback_data="admin_panel")
-        ]])
+        f"✅ Approved: {exchange_info['amount']} MMK\n"
+        f"User: {exchange_info['username']}\n\n"
+        "ကျေးဇူးပြု၍ **ငွေလွှဲပြီးကြောင်း Slip ပုံ** ကို ပို့ပေးပါ။"
     )
+
+async def handle_receipt_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Admin တင်လိုက်သော Slip ကို User ထံ ပို့ပေးခြင်း"""
+    if update.effective_user.id != OWNER_ID: return
+    
+    info = context.user_data.get('pending_receipt_info')
+    ex_id = context.user_data.get('pending_exchange_id')
+    
+    if not info or not update.message.photo: return
+
+    photo = update.message.photo[-1].file_id
+    user_id = info['user_id']
+    
+    # 1. Send to User
+    await context.bot.send_message(user_id, f"✅ သင်၏ ငွေထုတ်ယူမှု ({info['amount']} MMK) အောင်မြင်ပါသည်။")
+    await context.bot.send_photo(user_id, photo, caption="ငွေလွှဲပြေစာ (Receipt)")
+    
+    # 2. Cleanup State
+    bot_state = load_bot_state()
+    if ex_id in bot_state["pending_exchanges"]:
+        del bot_state["pending_exchanges"][ex_id]
+        save_bot_state(bot_state)
+    
+    context.user_data.pop('pending_receipt_info', None)
+    await update.message.reply_text("✅ Slip ကို User ထံ ပို့ပြီးပါပြီ။")
+
+async def exchange_cancel_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """ငွေထုတ်လွှာကို ပယ်ဖျက်ပြီး User ထံ ငွေပြန်ထည့်ပေးခြင်း"""
+    query = update.callback_query
+    exchange_id = query.data.split("_")[2]
+    
+    bot_state = load_bot_state()
+    info = bot_state.get("pending_exchanges", {}).get(exchange_id)
+    
+    if info:
+        user_id = info['user_id']
+        refund_amount = info['amount']
+        
+        user_data = get_user_data(user_id)
+        update_user_data(user_id, {"mmk": user_data.get('mmk', 0) + refund_amount})
+        
+        del bot_state["pending_exchanges"][exchange_id]
+        save_bot_state(bot_state)
+        
+        try:
+            await context.bot.send_message(user_id, f"❌ သင်၏ ငွေထုတ်ယူမှု ပယ်ဖျက်ခံရပါသည်။ {refund_amount} MMK ကို Balance ထဲ ပြန်ထည့်ပေးထားပါသည်။")
+        except: pass
+        
+    await query.edit_message_text("❌ ငွေထုတ်လွှာကို ပယ်ဖျက်ပြီး ငွေပြန်အမ်းလိုက်ပါပြီ။")
+
+async def view_all_users_list(query):
+    """အသုံးပြုသူအားလုံးကို ကြည့်ရှုခြင်း"""
+    users = get_all_users()
+    text = f"👥 **Total Users: {len(users)}**\n\n"
+    for u in users[:15]: # ပထမ ၁၅ ယောက်ပြရန်
+        text += f"🔹 {u.get('username') or 'NoName'} (ID: `{u['user_id']}`) - {u.get('mmk', 0)} MMK\n"
+    
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="admin_panel")]]))
