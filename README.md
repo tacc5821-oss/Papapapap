@@ -3,10 +3,10 @@
 A comprehensive Telegram bot with spin system, point exchange, event management, and admin controls.
 
 ## ✅ Bot Status
-- **Bot Name**: 🧧 Gift Way Bot
-- **Bot Username**: @giftwaychinese_bot
+- **Bot Name**: ******
+- **Bot Username********
 - **Status**: ✅ Running Successfully
-- **Owner ID**: 1735522859
+- **Owner ID**: *******
 
 ## 🎯 Features
 
