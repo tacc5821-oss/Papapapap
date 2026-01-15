@@ -41,7 +41,7 @@ def main():
     application.add_handler(CallbackQueryHandler(show_help_options, pattern="^get_help$"))
     
     # Crash Game
-    application.add_handler(CallbackQueryHandler(crash_game_start, pattern="^crash_game$"))
+application.add_handler(CallbackQueryHandler(crash_game_start, pattern="^crash_game$"))
 application.add_handler(CallbackQueryHandler(cash_out_callback, pattern="^cash_out_"))
 
     # Exchange MMK (စနစ်သစ်နှင့် ကိုက်ညီအောင် ပြင်ဆင်ထားပါသည်)
