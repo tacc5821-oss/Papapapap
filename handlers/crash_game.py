@@ -4,41 +4,34 @@ import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from database import get_user_data, update_user_data, add_user_history
-from config import OWNER_ID, LOG_GROUP_ID
 
 logger = logging.getLogger(__name__)
 
 async def crash_game_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    user_data = get_user_data(query.from_user.id)
-    context.user_data["waiting_for_bet"] = True
-    await query.edit_message_text(
-        f"🚀 **Crash Game**\n\n💰 Balance: {user_data.get('mmk', 0)} MMK\n"
-        f"လောင်းကြေးပမာဏ ရိုက်ပို့ပေးပါ -",
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="main_menu")]])
-    )
-
-async def crash_game_bet_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not context.user_data.get("waiting_for_bet"): return
-    bet_text = update.message.text.strip()
-    if not bet_text.isdigit():
-        await update.message.reply_text("❌ ဂဏန်းပဲရိုက်ပါ။")
-        return
-    
-    bet_amount = int(bet_text)
+    """ဂိမ်းစတင်ခြင်းနှင့် Multiplier တက်ခြင်း Logic"""
     user = update.effective_user
     user_data = get_user_data(user.id)
     
-    if user_data.get('mmk', 0) < bet_amount:
-        await update.message.reply_text("❌ ပိုက်ဆံမလုံလောက်ပါ။")
+    # လောင်းကြေးပမာဏကို context ထဲမှယူခြင်း
+    try:
+        bet_amount = int(context.user_data.get("current_bet", 0))
+    except:
+        await update.message.reply_text("❌ လောင်းကြေးသတ်မှတ်မှု မှားယွင်းနေပါသည်။")
         return
 
-    context.user_data["waiting_for_bet"] = False
+    # ပိုက်ဆံစစ်ဆေးခြင်း
+    if user_data.get('mmk', 0) < bet_amount:
+        await update.message.reply_text("❌ လက်ကျန်ငွေ မလုံလောက်ပါ။")
+        return
+
+    # ဂိမ်းအခြေအနေသတ်မှတ်ခြင်း
     context.user_data["is_playing"] = True
-    context.user_data["current_bet"] = bet_amount
-    update_user_data(user.id, {"mmk": user_data.get('mmk') - bet_amount})
+    update_user_data(user.id, {"mmk": user_data['mmk'] - bet_amount})
     
+    # Crash Point ကို Random သတ်မှတ်ခြင်း (1.2 မှ 10.0 ကြား)
+    crash_point = round(random.uniform(1.2, 10.0), 1)
+    
+    # +0.2 စီတိုးမည့် Multipliers စာရင်း
     multipliers = [
         (1.0, "🥚"), (1.2, "🐣"), (1.4, "🐥"), (1.6, "🐤"), (1.8, "🐦"),
         (2.0, "🐧"), (2.2, "🕊️"), (2.4, "🦅"), (2.6, "🦆"), (2.8, "🦢"),
@@ -51,32 +44,68 @@ async def crash_game_bet_handler(update: Update, context: ContextTypes.DEFAULT_T
         (9.0, "🌛"), (9.2, "🌟"), (9.4, "🌌"), (9.6, "🛰️"), (9.8, "🛸"),
         (10.0, "🚀")
     ]
-    crash_point = round(random.uniform(1.1, 4.0), 1)
-    game_msg = await update.message.reply_text("ဂိမ်းစတင်ပါပြီ... ⏳")
-    
+
+    game_msg = await update.message.reply_text("🚀 ဂိမ်းစတင်နေပါပြီ...")
+
     for rate, emoji in multipliers:
-        if not context.user_data.get("is_playing"): break
+        # Cash Out နှိပ်လိုက်လျှင် Loop ကိုရပ်ရန်
+        if not context.user_data.get("is_playing"):
+            return
+
+        # Crash Point ရောက်သွားလျှင် (ရှုံးလျှင်)
         if rate >= crash_point:
             context.user_data["is_playing"] = False
-            await game_msg.edit_text(f"💥 BOOM! {rate}x မှာ ပေါက်ကွဲသွားသည်။")
+            await game_msg.edit_text(f"💥 **BOOM! {rate}x** မှာ ပေါက်ကွဲသွားပါပြီ။\n💸 သင် {bet_amount} MMK ရှုံးနိမ့်သွားပါသည်။")
             return
-        
+
+        # Multiplier တက်နေစဉ် Message ကို Update လုပ်ခြင်း
         await game_msg.edit_text(
-            f"📈 Multiplier: {rate}x {emoji}\n💰 Winning: {int(context.user_data['current_bet'] * rate)} MMK",
+            f"📈 **Multiplier: {rate}x {emoji}**\n"
+            f"💰 အနိုင်ရရှိနိုင်ခြေ: {int(bet_amount * rate)} MMK",
             reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("💰 Cash Out", callback_data=f"cash_out_{rate}")
             ]])
         )
+        
+        # Multiplier တက်သည့်အရှိန် (1.2 စက္ကန့် စောင့်ခြင်း)
         await asyncio.sleep(1.2)
 
 async def cash_out_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Cash Out ခလုတ်နှိပ်သည့်အခါ အလုပ်လုပ်မည့် Function"""
     query = update.callback_query
-    await query.answer()
-    if not context.user_data.get("is_playing"): return
+    
+    # ဂိမ်းကစားနေဆဲဟုတ်မဟုတ် စစ်ဆေးခြင်း
+    if not context.user_data.get("is_playing"):
+        await query.answer("❌ ဂိမ်းက ပြီးဆုံးသွားပါပြီ။", show_alert=True)
+        return
+
+    # ဂိမ်းကိုချက်ချင်းရပ်ခြင်း
     context.user_data["is_playing"] = False
-    rate = float(query.data.split("_")[2])
-    bet_amount = context.user_data.get("current_bet")
-    win_amount = int(bet_amount * rate)
-    user_data = get_user_data(query.from_user.id)
-    update_user_data(query.from_user.id, {"mmk": user_data.get('mmk', 0) + win_amount})
-    await query.edit_message_text(f"✅ Cash Out အောင်မြင်သည်။\n💰 {win_amount} MMK ရရှိပါသည်။")
+    await query.answer()
+
+    # Data ခွဲထုတ်ခြင်း (cash_out_1.4 ဆိုလျှင် 1.4 ကိုယူခြင်း)
+    try:
+        rate = float(query.data.split("_")[2])
+        bet_amount = context.user_data.get("current_bet", 0)
+        win_amount = int(bet_amount * rate)
+        
+        user_id = query.from_user.id
+        user_data = get_user_data(user_id)
+        
+        # ပိုက်ဆံအသစ်တွက်ချက်ပြီး Update လုပ်ခြင်း
+        new_balance = user_data.get('mmk', 0) + win_amount
+        update_user_data(user_id, {"mmk": new_balance})
+        add_user_history(user_id, "Crash Win", f"Won {win_amount} MMK at {rate}x")
+
+        await query.edit_message_text(
+            f"✅ **Cash Out အောင်မြင်ပါသည်။**\n\n"
+            f"📈 Multiplier: {rate}x\n"
+            f"💰 အနိုင်ရရှိငွေ: {win_amount} MMK\n"
+            f"💵 လက်ရှိလက်ကျန်: {new_balance} MMK",
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")
+            ]])
+        )
+    except Exception as e:
+        logger.error(f"Cashout error: {e}")
+        await query.message.reply_text("❌ အမှားအယွင်းတစ်ခု ဖြစ်သွားပါသည်။")
