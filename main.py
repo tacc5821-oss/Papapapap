@@ -42,7 +42,7 @@ def main():
     
     # Crash Game
     application.add_handler(CallbackQueryHandler(crash_game_start, pattern="^crash_game$"))
-    application.add_handler(CallbackQueryHandler(cash_out_callback, pattern="^cash_out_")) # pattern ကို အနောက်မှာ rate ပါနိုင်ရန် _ ထည့်ထားပါသည်
+    application.add_handler(CallbackQueryHandler(cash_out_callback, pattern="^cash_out_"))
 
     # Exchange MMK (စနစ်သစ်နှင့် ကိုက်ညီအောင် ပြင်ဆင်ထားပါသည်)
     application.add_handler(CallbackQueryHandler(exchange_callback, pattern="^exchange$"))
