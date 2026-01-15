@@ -51,8 +51,10 @@ async def crash_game_bet_handler(update: Update, context: ContextTypes.DEFAULT_T
             return
         
         await game_msg.edit_text(
-            f"📈 Multiplier: {rate}x {emoji}\n💰 Win: {int(bet_amount * rate)} MMK",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"💰 Cash Out ({rate}x)", callback_data=f"cash_out_{rate}")]])
+            f"📈 Multiplier: {rate}x {emoji}\n💰 Winning: {int(context.user_data['current_bet'] * rate)} MMK",
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("💰 Cash Out", callback_data=f"cash_out_{rate}")
+            ]])
         )
         await asyncio.sleep(1.2)
 
