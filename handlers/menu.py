@@ -12,9 +12,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start command handler with referral support."""
     user = update.effective_user
     
-    # Daily reset logic (Game logic အသစ်အတွက် လိုအပ်ပါက ဆက်သုံးနိုင်ရန်)
-    reset_daily_spins()
-    
     # Handle referral
     if context.args and len(context.args) > 0:
         try:
